@@ -7,7 +7,7 @@ GIT_REPO=https://${GH_TOKEN}@github.com/$(GIT_USERNAME)/inspector.git master:pro
 all:
 	@echo "ayy lmao"
 
-deploy: git_config compile_ts
+deploy: git_config compile_ts git_push
 
 git_config:
 	@echo "Hitting deployment CI... "
@@ -21,11 +21,11 @@ compile_ts:
 	cd $(BUILD_DIR)
 
 git_push:
+	@echo "Adding and committing to production."
 	git add .
 	git commit -m "AUTOMATED: \
 			\from production Makefile -- \
 			\Committer $(whoami): $(date +"%Y-%m-%d %H:%M:%S")"
-	git push --force $(GIT_REPO)
 
 clean:
 	rm -rf $(TSC_BUILD)
