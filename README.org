@@ -1,0 +1,3 @@
+* Inspector Dashboard
+** Notes
+***  Script ID files are not exposed in this repo for security purposes.
