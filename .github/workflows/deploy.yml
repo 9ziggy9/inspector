@@ -22,3 +22,6 @@ jobs:
 
     - name: Build
       run: make
+
+    - name: Exit Codes
+      run: git diff --exit-code
