@@ -21,6 +21,8 @@ jobs:
       run: npm install
 
     - name: Build
+      env:
+        GH_TOKEN: ${{secrets.GH_TOKEN}}
       run: make deploy
 
     - name: Exit Codes
