@@ -21,7 +21,7 @@ jobs:
       run: npm install
 
     - name: Build
-      run: make
+      run: make deploy
 
     - name: Exit Codes
       run: git diff --exit-code
