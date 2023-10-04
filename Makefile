@@ -19,7 +19,8 @@ compile_ts:
 	@echo "Building TypeScript"
 	$(TSC_CMD)
 	cd $(BUILD_DIR)
-	@echo ${DEPLOY_KEY}
+	@echo ${whoami}
+	@echo ${}
 
 git_push:
 	git add .
