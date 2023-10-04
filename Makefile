@@ -22,7 +22,9 @@ compile_ts:
 
 git_push:
 	git add .
-	git commit -m "Automated via makefile"
+	git commit -m "AUTOMATED: \
+			\from production Makefile -- \
+			\Committer $(whoami): $(date +"%Y-%m-%d %H:%M:%S")"
 	git push --force $(GIT_REPO)
 
 clean:
