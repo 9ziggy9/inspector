@@ -25,3 +25,4 @@ jobs:
 
     - name: Hiya
       run: echo "Hello my friends"
+      run: ls ./build
