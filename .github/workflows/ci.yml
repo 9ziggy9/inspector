@@ -24,7 +24,7 @@ jobs:
       env:
         DEPLOY_KEY: ${{secrets.DEPLOY_KEY}}
       run: |
-           echo $DEPLOY_KEY
+           echo "$DEPLOY_KEY"
 
     - name: Build And Deploy
       run: make deploy
