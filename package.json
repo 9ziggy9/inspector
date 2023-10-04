@@ -1,0 +1,15 @@
+{
+  "name": "inspector",
+  "version": "1.0.0",
+  "description": "* Inspector Dashboard ***  Script ID files are not exposed in this repo for security purposes.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^5.2.2"
+  }
+}
