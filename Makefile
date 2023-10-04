@@ -10,6 +10,7 @@ compile_ts: ./src/main.ts
 
 deploy: 
 	@echo "Hitting deployment CI"
+	@echo ${GH_TOKEN}
 
 clean:
 	rm -rf $(TSC_BUILD)
