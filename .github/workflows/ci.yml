@@ -26,7 +26,7 @@ jobs:
       run: |
            echo $DEPLOY_KEY > deploy_key.pem
            chmod 600 deploy_key.pem
-           ssh-agent -a $SSH_AUTH_SOCKET
+           eval $(ssh-agent -s)
            ssh-add deploy_key.pem
 
     - name: Build And Deploy
