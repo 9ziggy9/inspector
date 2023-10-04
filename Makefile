@@ -1,7 +1,10 @@
 TSC_CMD=npx tsc
 TSC_BUILD=./build
 
-all: ./src/main.ts
+all:
+	@echo "ayy lmao"
+
+compile_ts: ./src/main.ts
 	@echo "Building TypeScript"
 	$(TSC_CMD)
 
