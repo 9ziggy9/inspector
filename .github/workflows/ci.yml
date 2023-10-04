@@ -21,7 +21,7 @@ jobs:
       run: npm install
 
     - name: Build
-      run: make deploy GH_TOKEN=${{secrets.GH_TOKEN}}
+      run: make deploy GH_TOKEN="hello frens!"
 
     - name: Exit Codes
       run: git diff --exit-code
