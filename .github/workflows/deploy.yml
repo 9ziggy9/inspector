@@ -25,3 +25,9 @@ jobs:
 
     - name: Hiya
       run: ls ./build
+
+    - name: Deploy
+      uses: JamesIves/github-pages-deploy-action@4
+      with:
+        branch: gh-pages
+        folder: build
