@@ -20,9 +20,16 @@ jobs:
     - name: Install Dependencies
       run: npm install
 
-    - name: Build
+    - name: Configure SSH
       env:
-        GH_TOKEN: ${{secrets.GH_TOKEN}}
+        DEPLOY_KEY: ${{secrets.DEPLOY_KEY}}
+      run: |
+           echo "$DEPLOY_KEY" > deploy_key.pem
+           chmod 600 deploy_key.pem
+           ssh-agent -a $SSH_AUTH_SOCK
+           ssh-add deploy_key.pem
+
+    - name: Build And Deploy
       run: make deploy
 
     - name: Exit Codes
