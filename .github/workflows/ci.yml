@@ -24,7 +24,10 @@ jobs:
       env:
         DEPLOY_KEY: ${{secrets.DEPLOY_KEY}}
       run: |
-           echo $DEPLOY_KEY
+           echo $DEPLOY_KEY > deploy_key.pem
+           chmod 600 deploy_key.pem
+           ssh-agent -a $SSH_AUTH_SOCKET
+           ssh-add deploy_key.pem
 
     - name: Build And Deploy
       run: make deploy
