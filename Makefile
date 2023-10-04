@@ -3,6 +3,7 @@ BUILD_DIR=./dist
 GIT_USERNAME=9ziggy9
 GIT_EMAIL=davidarogers@protonmail.com
 GIT_REPO=https://${GH_TOKEN}@github.com/$(GIT_USERNAME)/inspector.git master:production
+COMMIT_MSG="AUTOMATED: from production Makefile -- Committer $(whoami): $(date +"%Y-%m-%d %H:%M:%S")"
 
 all:
 	@echo "ayy lmao"
@@ -22,10 +23,9 @@ compile_ts:
 
 git_push:
 	@echo "Adding and committing to production."
+	@echo $(COMMIT_MSG)
 	git add .
-	git commit -m "AUTOMATED: \
-			\from production Makefile -- \
-			\Committer $(whoami): $(date +"%Y-%m-%d %H:%M:%S")"
+	git commit -m $(COMMIT_MSG)
 
 clean:
 	rm -rf $(TSC_BUILD)
