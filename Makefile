@@ -1,5 +1,5 @@
 TSC_CMD=npx tsc
-TSC_BUILD=./build
+TSC_BUILD=./dist
 
 all:
 	@echo "ayy lmao"
