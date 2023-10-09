@@ -30,6 +30,8 @@ jobs:
            file deploy_key.pem
            eval $(ssh-agent -s)
            ssh-add deploy_key.pem
+           echo "Testing actions..."
+           echo $(ACTION_TEST)
 
     - name: Build And Deploy
       run: make deploy
