@@ -12,7 +12,7 @@ build_ts:
 	$(TSC_CMD)
 	cd $(BUILD_DIR)
 
-deploy: build
+deploy: build_ts
 	cd $(BUILD_DIR) && \
 	git init && \
 	git config user.name "$(GIT_USERNAME)" && \
