@@ -10,7 +10,6 @@ all: deploy
 build_ts:
 	@echo "Building TypeScript"
 	$(TSC_CMD)
-	cd $(BUILD_DIR)
 
 deploy: build_ts
 	cd $(BUILD_DIR) && \
@@ -22,4 +21,4 @@ deploy: build_ts
 	git push --force $(REPO) master:$(PROD_BRANCH)
 
 clean:
-	rm -rf $(TSC_BUILD)
+	rm -rf $(BUILD_DIR)
