@@ -11,9 +11,10 @@ build_ts:
 
 deploy:
 	cd $(BUILD_DIR)
+	git checkout production
 	git add .
 	git commit -m "Automated push to production from Makefile: $(date)"
-	git push --force $(REPO) master:$(PROD_BRANCH)
+	git push --force $(REPO) $(PROD_BRANCH)
 
 clean:
 	rm -rf $(BUILD_DIR)
