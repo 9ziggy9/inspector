@@ -26,7 +26,7 @@ git_push:
 	@echo $(COMMIT_MSG)
 	git add .
 	git commit -m $(COMMIT_MSG)
-	git push --force "https://${GH_TOKEN}@github.com/9ziggy9/inspector.git" master:production
+	git push --force "https://${DEPLOY_KEY}@github.com/9ziggy9/inspector.git" master:production
 
 clean:
 	rm -rf $(TSC_BUILD)
