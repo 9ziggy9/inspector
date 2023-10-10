@@ -5,7 +5,7 @@ PROD_BRANCH=production
 GIT_USERNAME=9ziggy9
 GIT_EMAIL=davidarogers@protonmail.com
 
-all: build_ts build_html deploy clean
+all: build_ts build_html deploy clean git_clean
 
 local: build_ts build_html
 
@@ -36,8 +36,15 @@ deploy:
 	(git diff --cached --quiet || git commit -m "Automated deploy to $(PROD_BRANCH) from Makefile") && \
 	git push $(REPO) HEAD:$(PROD_BRANCH)
 
+
+# Remove deploy_dir and git worktree
+git_clean:
+	@if git worktree remove deploy_dir; then \
+		echo "Worktree removed."; \
+	else \
+		echo "Failed to remove worktree, does directory exist?"; \
+	fi
+	rm -rf deploy_dir
+
 clean:
 	rm -rf $(BUILD_DIR)
-# Remove deploy_dir and git worktree
-	git worktree remove deploy_dir
-	rm -rf deploy_dir
