@@ -1,4 +1,4 @@
-TSC_CMD=npx tsc
+BUILD_CMD=npx webpack --config webpack.config.js
 BUILD_DIR=./dist
 REPO=git@github.com:9ziggy9/inspector.git
 PROD_BRANCH=production
@@ -6,23 +6,18 @@ GIT_USERNAME=9ziggy9
 GIT_EMAIL=davidarogers@protonmail.com
 
 all:
-	@-make   --no-print-directory clean
+	@-make --no-print-directory clean
 	@-make --no-print-directory git_clean
-	@-make   --no-print-directory build_ts
-	@-make   --no-print-directory build_html
-	@-make   --no-print-directory deploy
-	@-make   --no-print-directory clean
-	@-make   --no-print-directory git_clean
+	@-make --no-print-directory build
+	@-make --no-print-directory deploy
+	@-make --no-print-directory clean
+	@-make --no-print-directory git_clean
 
-local: build_ts build_html
+local: build
 
-build_ts:
-	@echo "Building TypeScript"
-	$(TSC_CMD)
-
-build_html:
-	@echo "Moving static entry point."
-	cp ./index.html $(BUILD_DIR)/
+build:
+	@echo "Building WebPack"
+	$(BUILD_CMD)
 
 deploy:
 # Guard for failed build
