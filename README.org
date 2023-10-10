@@ -1,4 +1,6 @@
 * Inspector Dashboard
+** TODO
+- Implement geocoding via address: possible api is nominatim
 ***  Script ID files are not exposed in this repo for security purposes.
 *** Building (look at Makefile)
 - The build architecture here is some what unique--Makefile is used to checkout the production branch into a git worktree before building and bundling into a webpack.
