@@ -10,6 +10,7 @@
   #+END_SRC
 *** TODOS
 - [X] Implement build pipeline via Makefile which compiles TypeScript and bundles webpack.
+- [ ] Decouple production branch into private repository.
 - [X] Implement deployment pipeline to serve webpack from GH pages.
 - [X] Establish very simple OpenLayer API bundle in main application.
 - [ ] Determine some type of sane type system for sheet data.

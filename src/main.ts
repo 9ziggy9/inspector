@@ -1,3 +1,4 @@
+// BEGIN OpenLayer
 import Map from "ol/Map";
 import View from "ol/View";
 import TileLayer from "ol/layer/Tile";
@@ -10,6 +11,10 @@ import VectorSource from "ol/source/Vector";
 import Point from "ol/geom/Point";
 import Feature from "ol/Feature";
 import {Icon, Style} from "ol/style";
+// END OpenLayer
+
+// BEGIN Google Sheets API
+// END Google Sheets API
 
 // Types
 type Coord = olCoord.Coordinate;
@@ -17,7 +22,7 @@ type SheetRow = {
   date       : Date;
   addr       : string;
   time       : number;
-  department : number; // make enumeration for departments
+  dept       : number; // make enumeration for departments
   citNo      : number;
   comment    : string;
 };

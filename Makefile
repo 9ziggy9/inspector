@@ -1,7 +1,8 @@
 BUILD_CMD=npx webpack --config webpack.config.js
 BUILD_DIR=./dist
 REPO=git@github.com:9ziggy9/inspector.git
-PROD_BRANCH=production
+PROD_REPO=git@github.com:9ziggy9/inspector-production.git
+PROD_BRANCH=master
 GIT_USERNAME=9ziggy9
 GIT_EMAIL=davidarogers@protonmail.com
 
@@ -27,7 +28,7 @@ deploy:
 	fi
 
 # Checkout the production branch in a sub-directory
-	git worktree add deploy_dir $(PROD_BRANCH)
+	git clone $(PROD_REPO) deploy_dir
 	cp -r $(BUILD_DIR)/* deploy_dir
 
 # Commit changes from deploy_dir
@@ -36,16 +37,11 @@ deploy:
 	git config user.email "$(GIT_EMAIL)" && \
 	git add . && \
 	(git diff --cached --quiet || git commit -m "Automated deploy to $(PROD_BRANCH) from Makefile") && \
-	git push $(REPO) HEAD:$(PROD_BRANCH)
+	git push origin $(PROD_BRANCH)
 
 
 # Remove deploy_dir and git worktree
 git_clean:
-	@if git worktree remove deploy_dir; then \
-		echo "Worktree removed."; \
-	else \
-		echo "No worktree to clean. Skipping."; \
-	fi
 	rm -rf deploy_dir
 
 clean:
