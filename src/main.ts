@@ -2,8 +2,15 @@ import Map from "ol/Map";
 import View from "ol/View";
 import TileLayer from "ol/layer/Tile";
 import OSM from "ol/source/OSM";
+import * as mapControls from "ol/control";
+import * as projection from "ol/proj";
+import * as olCoord from "ol/coordinate";
+
+// SHOULD GO TO DEDICATE GLOBALS FILE
+const ROSEVILLE_COORD: olCoord.Coordinate = [-121.2880,38.7521];
 
 const newMap = () => new Map({
+  controls: [],
   target: "map",
   layers: [
     new TileLayer({
@@ -11,8 +18,8 @@ const newMap = () => new Map({
     }),
   ],
   view: new View({
-    center: [0,0],
-    zoom: 2,
+    center: projection.fromLonLat(ROSEVILLE_COORD), // Roseville CA
+    zoom: 12,
   }),
 });
 
