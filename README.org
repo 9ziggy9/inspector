@@ -1,8 +1,11 @@
 * Inspector Dashboard
 ***  Script ID files are not exposed in this repo for security purposes.
 *** Building (look at Makefile)
-- The build architecture here is some what unique--Makefile is used to checkout the production branch into a git worktree before building and bundling into a webpack.
-- The project can also be build locally, so long as one has a mechanism of serving the build directory. I simply used in-build python3 http module.
+- The build architecture here is some what unique--Makefile is used to clone the private production repo
+  into a staging directory before building and bundling into a webpack. Sensitive API information is never
+  exposed, only exists in local encrypted files.
+- The project can also be build locally, so long as one has a mechanism of serving the build directory.
+  I simply used in-build python3 http module.
   #+BEGIN_SRC console
   $ make local
   $ cd ./dist
@@ -10,7 +13,7 @@
   #+END_SRC
 *** TODOS
 - [X] Implement build pipeline via Makefile which compiles TypeScript and bundles webpack.
-- [ ] Decouple production branch into private repository.
+- [X] Decouple production branch into private repository.
 - [X] Implement deployment pipeline to serve webpack from GH pages.
 - [X] Establish very simple OpenLayer API bundle in main application.
 - [ ] Determine some type of sane type system for sheet data.
