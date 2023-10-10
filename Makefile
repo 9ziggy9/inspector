@@ -5,7 +5,14 @@ PROD_BRANCH=production
 GIT_USERNAME=9ziggy9
 GIT_EMAIL=davidarogers@protonmail.com
 
-all: build_ts build_html deploy clean git_clean
+all:
+	@-make   --no-print-directory clean
+	@-make --no-print-directory git_clean
+	@-make   --no-print-directory build_ts
+	@-make   --no-print-directory build_html
+	@-make   --no-print-directory deploy
+	@-make   --no-print-directory clean
+	@-make   --no-print-directory git_clean
 
 local: build_ts build_html
 
@@ -19,7 +26,7 @@ build_html:
 
 deploy:
 # Guard for failed build
-	if [ ! -d "dist" ]; then \
+	@if [ ! -d "dist" ]; then \
 		echo "BUILD FAIL: The 'dist' distribution directory does not exist."; \
 		exit 1; \
 	fi
@@ -42,7 +49,7 @@ git_clean:
 	@if git worktree remove deploy_dir; then \
 		echo "Worktree removed."; \
 	else \
-		echo "Failed to remove worktree, does directory exist?"; \
+		echo "No worktree to clean. Skipping."; \
 	fi
 	rm -rf deploy_dir
 
