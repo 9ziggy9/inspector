@@ -10,10 +10,16 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/ol": "^7.0.0",
+    "copy-webpack-plugin": "^11.0.0",
     "html-webpack-plugin": "^5.5.3",
     "ts-loader": "^9.5.0",
     "typescript": "^5.2.2",
     "webpack": "^5.88.2",
     "webpack-cli": "^5.1.4"
+  },
+  "dependencies": {
+    "ol": "^8.1.0",
+    "ol-geocoder": "^4.3.1"
   }
 }
