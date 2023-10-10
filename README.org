@@ -8,7 +8,7 @@
   $ cd ./dist
   $ python3 -m "http.server" 9001
   #+END_SRC
-** TODO
+*** TODOS
 - [X] Implement build pipeline via Makefile which compiles TypeScript and bundles webpack.
 - [X] Implement deployment pipeline to serve webpack from GH pages.
 - [X] Establish very simple OpenLayer API bundle in main application.
