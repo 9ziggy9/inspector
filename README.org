@@ -4,7 +4,7 @@
 - The build architecture here is some what unique--Makefile is used to checkout the production branch into a git worktree before building and bundling into a webpack.
 - The project can also be build locally, so long as one has a mechanism of serving the build directory. I simply used in-build python3 http module.
   #+BEGIN_SRC console
-    $ make local
-    $ cd ./dist
-    $ python3 -m "http.server" 9001
+  $ make local
+  $ cd ./dist
+  $ python3 -m "http.server" 9001
   #+END_SRC
