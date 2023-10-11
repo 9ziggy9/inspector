@@ -11,11 +11,12 @@ import VectorSource from "ol/source/Vector";
 import Point from "ol/geom/Point";
 import Feature from "ol/Feature";
 import {Icon, Style} from "ol/style";
-import {SUPER_SECRET} from "./secrets";
 // END OpenLayer
 
-// BEGIN Google Sheets API
-// END Google Sheets API
+// BEGIN Google
+import {google} from "googleapis";
+import {OAuth2Client} from "google-auth-library";
+// END Google
 
 // Types
 type Coord = olCoord.Coordinate;
@@ -33,6 +34,19 @@ const ROSEVILLE_COORD: Coord = [-121.2880,38.7521];
 
 const urlNominatimSearch = (addr: string): string =>
   `https://nominatim.openstreetmap.org/search?format=json&q=${addr}`;
+
+async function fetchLogEntries(logName: string, range: string) {
+  // TODO TOMORROW
+  const sheetEndpoint = "https://sheets.googleapis.com/v4/spreadsheets/"
+    + `${_API_SHEET_ID}/values/${logName}!${range}?key=${_API_SHEET_KEY}:`;
+  try {
+    const res = await fetch(sheetEndpoint);
+    const data = res.json();
+    console.log(data);
+  } catch (error) {
+    console.error("Error feching sheet data:", error);
+  }
+}
 
 // Consider changing to a structured query which accepts a UrlSearchParms obj.
 async function geocodeAddr(addr: string): Promise<[Coord, Coord]> {
@@ -61,9 +75,7 @@ async function main() {
   h1.innerText = "Hello, maps!";
   document.body.appendChild(h1);
   const map = newMap();
-  const test = await geocodeAddr("1151 Galleria Blvd");
-  console.log(test);
-  console.log(SUPER_SECRET);
+  fetchLogEntries("Log-arogers", "A13:M");
 }
 
 window.onload = main;
