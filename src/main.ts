@@ -11,6 +11,7 @@ import VectorSource from "ol/source/Vector";
 import Point from "ol/geom/Point";
 import Feature from "ol/Feature";
 import {Icon, Style} from "ol/style";
+import {SUPER_SECRET} from "./secrets";
 // END OpenLayer
 
 // BEGIN Google Sheets API
@@ -62,6 +63,7 @@ async function main() {
   const map = newMap();
   const test = await geocodeAddr("1151 Galleria Blvd");
   console.log(test);
+  console.log(SUPER_SECRET);
 }
 
 window.onload = main;
