@@ -1,10 +1,7 @@
 BUILD_CMD=npx webpack --config webpack.config.js
 BUILD_DIR=./dist
-REPO=git@github.com:9ziggy9/inspector.git
-PROD_REPO=git@github.com:9ziggy9/inspector-production.git
-PROD_BRANCH=master
-GIT_USERNAME=9ziggy9
-GIT_EMAIL=davidarogers@protonmail.com
+
+-include .env
 
 all:
 	@-make --no-print-directory clean
