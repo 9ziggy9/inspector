@@ -12,11 +12,8 @@ import Point from "ol/geom/Point";
 import Feature from "ol/Feature";
 import {Icon, Style} from "ol/style";
 // END OpenLayer
-
-// BEGIN Google
-import {google} from "googleapis";
-import {OAuth2Client} from "google-auth-library";
-// END Google
+import {_CLIENT_ID} from "./secrets.js";
+import * as Gapi from "gapi";
 
 // Types
 type Coord = olCoord.Coordinate;
@@ -35,17 +32,25 @@ const ROSEVILLE_COORD: Coord = [-121.2880,38.7521];
 const urlNominatimSearch = (addr: string): string =>
   `https://nominatim.openstreetmap.org/search?format=json&q=${addr}`;
 
-async function fetchLogEntries(logName: string, range: string) {
-  // TODO TOMORROW
-  const sheetEndpoint = "https://sheets.googleapis.com/v4/spreadsheets/"
-    + `${_API_SHEET_ID}/values/${logName}!${range}?key=${_API_SHEET_KEY}:`;
-  try {
-    const res = await fetch(sheetEndpoint);
-    const data = res.json();
-    console.log(data);
-  } catch (error) {
-    console.error("Error feching sheet data:", error);
-  }
+// async function fetchLogEntries(logName: string, range: string) {
+//   // TODO TOMORROW
+//   const sheetEndpoint = "https://sheets.googleapis.com/v4/spreadsheets/"
+//     + `${_API_SHEET_ID}/values/${logName}!${range}?key=${_API_SHEET_KEY}:`;
+//   try {
+//     const res = await fetch(sheetEndpoint);
+//     const data = res.json();
+//     console.log(data);
+//   } catch (error) {
+//     console.error("Error feching sheet data:", error);
+//   }
+// }
+
+function initGapi() {
+  Gapi.client.init({
+    "clientId": _CLIENT_ID,
+  }).then(() => {
+    console.log("Hello, from GAPI");
+  });
 }
 
 // Consider changing to a structured query which accepts a UrlSearchParms obj.
@@ -75,7 +80,7 @@ async function main() {
   h1.innerText = "Hello, maps!";
   document.body.appendChild(h1);
   const map = newMap();
-  fetchLogEntries("Log-arogers", "A13:M");
+  initGapi();
 }
 
 window.onload = main;

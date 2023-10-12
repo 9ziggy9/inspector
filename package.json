@@ -19,6 +19,9 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
+    "@types/gapi": "^0.0.45",
+    "@types/gapi.auth2": "^0.0.58",
+    "gapi": "^0.0.3",
     "ol": "^8.1.0",
     "ol-geocoder": "^4.3.1"
   }
