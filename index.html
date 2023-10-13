@@ -5,11 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Inspector Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="icon" type="image/png" sizes="16x16" href="./favicon.png">
     <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link
+      href="https://fonts.googleapis.com/css2?family=EB+Garamond&display=swap"
+      rel="stylesheet"> 
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed&display=swap"
+      rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@500&display=swap"
+      rel="stylesheet">
   </head>
+  <header>
+    <div class="menu-btn">menu</div>
+    <div class="spacer">
+      <h1 class="title">Inspector Dashboard</h1>
+    </div>
+    <div class="help-btn">help</div>
+    <div class="login-btn">login</div>
+  </header>
   <body>
     <div id="map"></div>
-    <script src="https://apis.google.com/js/api.js"></script>
     <script src="./bundle.js"></script>
+    <script async defer src="https://apis.google.com/js/api.js"></script>
+    <script async defer src="https://accounts.google.com/gsi/client"></script>
   </body>
 </html>

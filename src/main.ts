@@ -12,9 +12,6 @@ import Point from "ol/geom/Point";
 import Feature from "ol/Feature";
 import {Icon, Style} from "ol/style";
 // END OpenLayer
-import {_CLIENT_ID} from "./secrets.js";
-
-declare const gapi: any;
 
 // Types
 type Coord = olCoord.Coordinate;
@@ -46,19 +43,6 @@ const urlNominatimSearch = (addr: string): string =>
 //   }
 // }
 
-function initGapi() {
-  gapi.load("client:auth2", () => {
-    console.log("Loading gapi client.");
-    gapi.client.init({
-      clientId: _CLIENT_ID,
-      scope: 'https://www.googleapis.com/auth/spreadsheets',
-      discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4']
-    }).then(() => {
-      console.log("gapi initialized.");
-    })
-  })
-}
-
 // Consider changing to a structured query which accepts a UrlSearchParms obj.
 async function geocodeAddr(addr: string): Promise<[Coord, Coord]> {
   const res = await fetch(urlNominatimSearch(addr+",Roseville,CA"));
@@ -86,7 +70,6 @@ async function main() {
   h1.innerText = "Hello, maps!";
   document.body.appendChild(h1);
   const map = newMap();
-  initGapi();
 }
 
 window.onload = main;

@@ -1,10 +1,100 @@
-body {
-    color: red;
-    background-color: #000;
+/* SOLARIZED */
+:root {
+    --my-black:      #002b36; --my-blue:         #073642;
+    --my-light-blue: #268bd2; --my-cyan:         #2aa198;
+    --my-green:      #859900; --my-dark-gray:    #586e75;
+    --my-light-gray: #657b83; --my-lighter-gray: #839496;
+    --my-white:      #eee8d5; --my-light-white:  #fdf6e3;
+    --my-red:        #dc322f; --my-magenta:      #d33682;
+    --my-violet:     #6c71c4; --my-orange:       #cb4b16;
+    --my-yellow:     #b58900; --my-modal:        #586e75AA;
+}
+
+/* SOLARIZED */
+.col-0 {
+    --my-black:      #002b36; --my-blue:         #073642;
+    --my-light-blue: #268bd2; --my-cyan:         #2aa198;
+    --my-green:      #859900; --my-dark-gray:    #586e75;
+    --my-light-gray: #657b83; --my-lighter-gray: #839496;
+    --my-white:      #eee8d5; --my-light-white:  #fdf6e3;
+    --my-red:        #dc322f; --my-magenta:      #d33682;
+    --my-violet:     #6c71c4; --my-orange:       #cb4b16;
+    --my-yellow:     #b58900; --my-modal:        #586e7588;
+}
+
+/* NORD */
+.col-1 {
+    --my-black:      #2e3440; --my-blue:         #81a1c1;
+    --my-light-blue: #88c0d0; --my-cyan:         #8fbcbb;
+    --my-green:      #a3be8c; --my-dark-gray:    #4c566a;
+    --my-light-gray: #d8dee9; --my-lighter-gray: #eceff4;
+    --my-white:      #e5e9f0; --my-light-white:  #f8f8f2;
+    --my-red:        #bf616a; --my-magenta:      #b48ead;
+    --my-violet:     #8fbcbb; --my-orange:       #ebcb8b;
+    --my-yellow:     #ebcb8b; --my-modal:        #4c566a88;
+}
+
+::-webkit-scrollbar {
+    display: none;;
+}
+
+::selection {
+    background-color: var(--my-black);
+    color: var(--my-yellow);
+}
+
+body,html {
+    font-family:  "EB Garamond", serif;
+    width:100%;
+    height:100%;
+    position:fixed;
+    margin: 0;
+    padding: 0;
+    background-color: var(--my-dark-gray);
+    color: var(--my-white);
+    display: flex; flex-direction: column; align-items: center;
+    caret-color: transparent;
+}
+
+header {
+    width: 100%;
+    font-size: 1.25rem;
+    font-family:  "EB Garamond", serif;
+    background-color: var(--my-blue);
+    color: var(--my-white);
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    list-style: none;
+    border:2px solid var(--my-blue);
+}
+
+.menu-btn, .login-btn, .help-btn {
+    padding: 0.25rem 0.25rem 0.25rem 0.25rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: var(--my-green);
+    color: var(--my-white);
+    transition: background-color 0.3s;
+    margin-right: 0.25rem;
+}
+
+.login-btn { margin-right: 0; }
+
+.spacer {
+    flex: 1;
+    display: flex;
+    justify-content: center; /* Centers the title horizontally */
+    align-items: center;     /* Centers the title vertically */
+}
+
+.title {
+    font-size: 1.5rem;
+    margin: 0;  /* Removes default margin from the h1 element */
 }
 
 #map {
-    background-color: green;
     width: 100%;
     height: 350px;
 }
