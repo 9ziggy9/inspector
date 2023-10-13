@@ -35,7 +35,7 @@
 }
 
 ::-webkit-scrollbar {
-    display: none;;
+    display: none;
 }
 
 ::selection {
@@ -52,7 +52,6 @@ body,html {
     padding: 0;
     background-color: var(--my-dark-gray);
     color: var(--my-white);
-    display: flex; flex-direction: column; align-items: center;
     caret-color: transparent;
 }
 
@@ -76,11 +75,34 @@ header {
     cursor: pointer;
     background-color: var(--my-green);
     color: var(--my-white);
-    transition: background-color 0.3s;
     margin-right: 0.25rem;
 }
 
 .login-btn { margin-right: 0; }
+
+.menu-btn:hover, .login-btn:hover, .help-btn:hover {
+    background-color: var(--my-orange);
+    transition: background-color 0.33s;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    background-color: var(--my-blue);
+    z-index: 1;
+}
+
+.dropdown-menu a {
+    color: var(--my-dark-gray);
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-menu a:hover {
+    background-color: var(--my-orange);
+    transition: background-color 0.33s;
+}
 
 .spacer {
     flex: 1;

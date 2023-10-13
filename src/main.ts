@@ -24,6 +24,23 @@ type SheetRow = {
   comment    : string;
 };
 
+// event handlers
+function onClickMenuBtn(): void {
+  const dropdown = document.getElementById("dropdown");
+  if (!dropdown) throw new Error("unreachable");
+  dropdown.style.display = dropdown.style.display === "none" ? "block" : "none";
+}
+
+// attach event handlers
+function attachToolbarHandlers(): void {
+  const loginBtn: Element = document.getElementsByClassName("login-btn")[0];
+  const menuBtn:  Element = document.getElementsByClassName("menu-btn")[0];
+  const helpBtn:  Element = document.getElementsByClassName("help-btn")[0];
+  loginBtn.addEventListener("click", () => console.log("Hello, login!"));
+  menuBtn.addEventListener("click",  onClickMenuBtn);
+  helpBtn.addEventListener("click",  () => console.log("Hello, help!"));
+}
+
 // SHOULD GO TO DEDICATE GLOBALS FILE
 const ROSEVILLE_COORD: Coord = [-121.2880,38.7521];
 
@@ -66,9 +83,7 @@ const newMap = () => new Map({
 });
 
 async function main() {
-  const h1 = document.createElement("h1");
-  h1.innerText = "Hello, maps!";
-  document.body.appendChild(h1);
+  attachToolbarHandlers();
   const map = newMap();
 }
 
