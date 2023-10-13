@@ -118,6 +118,16 @@ function onClickLoginBtn(): void {
   })
 }
 
+function onClickHelpBtn(): void {
+  console.log("Hit help!");
+  const token = gapi.client.getToken();
+  if (!token) {
+    console.log("Not currently logged in.");
+  } else {
+    console.log("Yes, logged in.");
+  }
+}
+
 // attach event handlers
 function attachToolbarHandlers(): void {
   const loginBtn: Element = document.getElementsByClassName("login-btn")[0];
@@ -125,19 +135,20 @@ function attachToolbarHandlers(): void {
   const helpBtn:  Element = document.getElementsByClassName("help-btn")[0];
   loginBtn.addEventListener("click", onClickLoginBtn);
   menuBtn.addEventListener("click",  onClickMenuBtn);
-  helpBtn.addEventListener("click",  () => console.log("Hello, help!"));
+  helpBtn.addEventListener("click",  onClickHelpBtn);
 }
 
 async function main() {
-  // Load and initialize gapi
+  // Load and initialize gapi/gis
   const flags: initFlags = {
     gapi: await loadGapiClient(),
     gis:  await loadGisClient()
   };
-  console.log(flags);
-  console.log(TOKEN_CLIENT);
+
   // Handlers
   attachToolbarHandlers();
+
+  // Configure OL Map
   const map = newMap();
 }
 
