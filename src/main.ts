@@ -13,7 +13,7 @@ import Feature from "ol/Feature";
 import {Icon, Style} from "ol/style";
 // END OpenLayer
 
-import {_API_KEY, _DISC_DOC, _SCOPES} from "./secrets.js";
+import {_API_KEY, _DISC_DOC, _SCOPES, _CLIENT_ID} from "./secrets.js";
 
 // Types
 type Coord = olCoord.Coordinate;
@@ -31,22 +31,6 @@ const ROSEVILLE_COORD: Coord = [-121.2880,38.7521];
 
 const urlNominatimSearch = (addr: string): string =>
   `https://nominatim.openstreetmap.org/search?format=json&q=${addr}`;
-
-// event handlers
-function onClickMenuBtn(): void {
-  const dropdown = document.getElementById("dropdown");
-  dropdown!.style.display = dropdown!.style.display === "none" ? "block" : "none";
-}
-
-// attach event handlers
-function attachToolbarHandlers(): void {
-  const loginBtn: Element = document.getElementsByClassName("login-btn")[0];
-  const menuBtn:  Element = document.getElementsByClassName("menu-btn")[0];
-  const helpBtn:  Element = document.getElementsByClassName("help-btn")[0];
-  loginBtn.addEventListener("click", () => console.log("Hello, login!"));
-  menuBtn.addEventListener("click",  onClickMenuBtn);
-  helpBtn.addEventListener("click",  () => console.log("Hello, help!"));
-}
 
 // Consider changing to a structured query which accepts a UrlSearchParms obj.
 async function geocodeAddr(addr: string): Promise<[Coord, Coord]> {
@@ -74,6 +58,21 @@ interface initFlags {
   gapi: boolean;
    gis: boolean;
 };
+interface GapiResponse {
+  result: {
+    values?: string[][];
+  };
+}
+interface GapiError {
+  error?: any;
+  message?: string;
+}
+type TokenClient = {
+  callback?: (resp: any) => void;
+  requestAccessToken: (options: any) => void;
+};
+
+let TOKEN_CLIENT: TokenClient;
 
 async function loadGapiClient(): Promise<boolean> {
   return new Promise(async (resolve, reject) => {
@@ -88,13 +87,55 @@ async function loadGapiClient(): Promise<boolean> {
   })
 }
 
+async function loadGisClient(): Promise<boolean> {
+  return new Promise(async (resolve, reject) => {
+    try {
+      TOKEN_CLIENT = await google.accounts.oauth2.initTokenClient({
+        client_id: _CLIENT_ID,
+        scope:     _SCOPES,
+        callback:  () => {}, // define later
+      });
+      resolve(true);
+    } catch {
+      reject(false);
+    }
+  })
+}
+
+// event handlers
+function onClickMenuBtn(): void {
+  const dropdown = document.getElementById("dropdown");
+  dropdown!.style.display = dropdown!.style.display === "none" ? "block" : "none";
+}
+
+function onClickLoginBtn(): void {
+  TOKEN_CLIENT.callback = function(resp: GapiError) {
+    if (resp.error !== undefined) throw resp;
+    console.log("hello login callback!");
+  };
+  TOKEN_CLIENT.requestAccessToken({
+    "prompt": gapi.client.getToken() ? "consent" : ""
+  })
+}
+
+// attach event handlers
+function attachToolbarHandlers(): void {
+  const loginBtn: Element = document.getElementsByClassName("login-btn")[0];
+  const menuBtn:  Element = document.getElementsByClassName("menu-btn")[0];
+  const helpBtn:  Element = document.getElementsByClassName("help-btn")[0];
+  loginBtn.addEventListener("click", onClickLoginBtn);
+  menuBtn.addEventListener("click",  onClickMenuBtn);
+  helpBtn.addEventListener("click",  () => console.log("Hello, help!"));
+}
+
 async function main() {
   // Load and initialize gapi
   const flags: initFlags = {
     gapi: await loadGapiClient(),
-    gis: false
+    gis:  await loadGisClient()
   };
   console.log(flags);
+  console.log(TOKEN_CLIENT);
   // Handlers
   attachToolbarHandlers();
   const map = newMap();
