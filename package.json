@@ -10,6 +10,8 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/gapi": "^0.0.45",
+    "@types/gapi.auth2": "^0.0.58",
     "@types/ol": "^7.0.0",
     "copy-webpack-plugin": "^11.0.0",
     "html-webpack-plugin": "^5.5.3",
@@ -19,9 +21,7 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "@types/gapi": "^0.0.45",
-    "@types/gapi.auth2": "^0.0.58",
-    "gapi": "^0.0.3",
+    "@types/gapi.client.sheets-v4": "^0.0.2",
     "ol": "^8.1.0",
     "ol-geocoder": "^4.3.1"
   }

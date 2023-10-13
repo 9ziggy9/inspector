@@ -13,7 +13,8 @@ import Feature from "ol/Feature";
 import {Icon, Style} from "ol/style";
 // END OpenLayer
 import {_CLIENT_ID} from "./secrets.js";
-import * as Gapi from "gapi";
+
+declare const gapi: any;
 
 // Types
 type Coord = olCoord.Coordinate;
@@ -46,11 +47,16 @@ const urlNominatimSearch = (addr: string): string =>
 // }
 
 function initGapi() {
-  Gapi.client.init({
-    "clientId": _CLIENT_ID,
-  }).then(() => {
-    console.log("Hello, from GAPI");
-  });
+  gapi.load("client:auth2", () => {
+    console.log("Loading gapi client.");
+    gapi.client.init({
+      clientId: _CLIENT_ID,
+      scope: 'https://www.googleapis.com/auth/spreadsheets',
+      discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4']
+    }).then(() => {
+      console.log("gapi initialized.");
+    })
+  })
 }
 
 // Consider changing to a structured query which accepts a UrlSearchParms obj.
