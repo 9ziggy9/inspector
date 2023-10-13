@@ -13,6 +13,8 @@ import Feature from "ol/Feature";
 import {Icon, Style} from "ol/style";
 // END OpenLayer
 
+import {_API_KEY, _DISC_DOC, _SCOPES} from "./secrets.js";
+
 // Types
 type Coord = olCoord.Coordinate;
 type SheetRow = {
@@ -24,11 +26,16 @@ type SheetRow = {
   comment    : string;
 };
 
+// SHOULD GO TO DEDICATE GLOBALS FILE
+const ROSEVILLE_COORD: Coord = [-121.2880,38.7521];
+
+const urlNominatimSearch = (addr: string): string =>
+  `https://nominatim.openstreetmap.org/search?format=json&q=${addr}`;
+
 // event handlers
 function onClickMenuBtn(): void {
   const dropdown = document.getElementById("dropdown");
-  if (!dropdown) throw new Error("unreachable");
-  dropdown.style.display = dropdown.style.display === "none" ? "block" : "none";
+  dropdown!.style.display = dropdown!.style.display === "none" ? "block" : "none";
 }
 
 // attach event handlers
@@ -41,25 +48,6 @@ function attachToolbarHandlers(): void {
   helpBtn.addEventListener("click",  () => console.log("Hello, help!"));
 }
 
-// SHOULD GO TO DEDICATE GLOBALS FILE
-const ROSEVILLE_COORD: Coord = [-121.2880,38.7521];
-
-const urlNominatimSearch = (addr: string): string =>
-  `https://nominatim.openstreetmap.org/search?format=json&q=${addr}`;
-
-// async function fetchLogEntries(logName: string, range: string) {
-//   // TODO TOMORROW
-//   const sheetEndpoint = "https://sheets.googleapis.com/v4/spreadsheets/"
-//     + `${_API_SHEET_ID}/values/${logName}!${range}?key=${_API_SHEET_KEY}:`;
-//   try {
-//     const res = await fetch(sheetEndpoint);
-//     const data = res.json();
-//     console.log(data);
-//   } catch (error) {
-//     console.error("Error feching sheet data:", error);
-//   }
-// }
-
 // Consider changing to a structured query which accepts a UrlSearchParms obj.
 async function geocodeAddr(addr: string): Promise<[Coord, Coord]> {
   const res = await fetch(urlNominatimSearch(addr+",Roseville,CA"));
@@ -68,7 +56,7 @@ async function geocodeAddr(addr: string): Promise<[Coord, Coord]> {
   else throw new Error("Address not found");
 }
 
-const newMap = () => new Map({
+const newMap = (): Map => new Map({
   controls: [],
   target: "map",
   layers: [
@@ -77,12 +65,37 @@ const newMap = () => new Map({
     }),
   ],
   view: new View({
-    center: projection.fromLonLat(ROSEVILLE_COORD), // Roseville CA
+    center: projection.fromLonLat(ROSEVILLE_COORD),
     zoom: 12,
   }),
 });
 
+interface initFlags {
+  gapi: boolean;
+   gis: boolean;
+};
+
+async function loadGapiClient(): Promise<boolean> {
+  return new Promise(async (resolve, reject) => {
+    try {
+      await gapi.load("client", () => {
+        gapi.client.init({apiKey: _API_KEY, discoveryDocs: [_DISC_DOC]})
+      })
+      resolve(true);
+    } catch {
+      reject(false);
+    }
+  })
+}
+
 async function main() {
+  // Load and initialize gapi
+  const flags: initFlags = {
+    gapi: await loadGapiClient(),
+    gis: false
+  };
+  console.log(flags);
+  // Handlers
   attachToolbarHandlers();
   const map = newMap();
 }
