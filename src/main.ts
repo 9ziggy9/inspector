@@ -17,14 +17,6 @@ import {_API_KEY, _DISC_DOC, _SCOPES, _CLIENT_ID} from "./secrets.js";
 
 // Types
 type Coord = olCoord.Coordinate;
-type SheetRow = {
-  date       : Date;
-  addr       : string;
-  time       : number;
-  dept       : number; // make enumeration for departments
-  citNo      : number;
-  comment    : string;
-};
 
 // SHOULD GO TO DEDICATE GLOBALS FILE
 const ROSEVILLE_COORD: Coord = [-121.2880,38.7521];
@@ -111,11 +103,33 @@ function onClickMenuBtn(): void {
 function onClickLoginBtn(): void {
   TOKEN_CLIENT.callback = function(resp: GapiError) {
     if (resp.error !== undefined) throw resp;
-    console.log("hello login callback!");
+    const loginBtn   = document.querySelector(".login-btn") as HTMLElement;
+    const logoutBtn  = document.querySelector(".logout-btn") as HTMLElement;
+    loginBtn!.style.display = "none";
+    logoutBtn!.style.display = "block";
   };
   TOKEN_CLIENT.requestAccessToken({
     "prompt": gapi.client.getToken() ? "consent" : ""
   })
+  const token = gapi.client.getToken();
+  if (token !== null) {
+    console.log("Logged in successfully.");
+  }
+}
+
+function onClickLogoutBtn(): void {
+  const token = gapi.client.getToken();
+  if (token !== null) {
+    google.accounts.oauth2.revoke(
+      token.access_token,
+      function(): void {
+        gapi.client.setToken(null);
+        const loginBtn = document.querySelector(".login-btn") as HTMLElement;
+        const logoutBtn  = document.querySelector(".logout-btn") as HTMLElement;
+        loginBtn!.style.display = "block";
+        logoutBtn!.style.display = "none";
+      });
+  }
 }
 
 function onClickHelpBtn(): void {
@@ -130,12 +144,14 @@ function onClickHelpBtn(): void {
 
 // attach event handlers
 function attachToolbarHandlers(): void {
-  const loginBtn: Element = document.getElementsByClassName("login-btn")[0];
-  const menuBtn:  Element = document.getElementsByClassName("menu-btn")[0];
-  const helpBtn:  Element = document.getElementsByClassName("help-btn")[0];
-  loginBtn.addEventListener("click", onClickLoginBtn);
-  menuBtn.addEventListener("click",  onClickMenuBtn);
-  helpBtn.addEventListener("click",  onClickHelpBtn);
+  const loginBtn  = document.querySelector(".login-btn");
+  const logoutBtn = document.querySelector(".logout-btn");
+  const menuBtn   = document.querySelector(".menu-btn");
+  const helpBtn   = document.querySelector(".help-btn");
+  loginBtn!.addEventListener("click", onClickLoginBtn);
+  menuBtn!.addEventListener("click",  onClickMenuBtn);
+  helpBtn!.addEventListener("click",  onClickHelpBtn);
+  logoutBtn!.addEventListener("click", onClickLogoutBtn);
 }
 
 async function main() {
