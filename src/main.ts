@@ -149,16 +149,29 @@ function normalizeSheetData(): any[][][] { // has to be a better data type here.
   return tableData;
 }
 
-function populateDataTable(rows: any[][][]): void {
+function genTableTd(data: string): HTMLElement {
+  const td = document.createElement("td");
+  td.innerText = data;
+  return td;
+}
+
+function genTableTr(row: string[7]): HTMLElement {
+  const tr = document.createElement("tr");
+  const [name,date,addr,time,dept,sign,cmnt] = row;
+  tr.append(
+    genTableTd(name), genTableTd(date),
+    genTableTd(addr), genTableTd(time),
+    genTableTd(dept), genTableTd(sign),
+  );
+  return tr;
+}
+
+function populateDataTable(data: any[][][]): void {
   const tableEntryPoint = document.getElementById("table-entry-point");
-  for (const r of rows) {
-    const tr = document.createElement("tr");
-    for (const header of r) {
-      const th = document.createElement("th");
-      th.textContent = header as unknown as string;
-      tr.appendChild(th);
+  for (const inspEntries of data) {
+    for (const row of inspEntries) {
+      tableEntryPoint!.appendChild(genTableTr(row as unknown as string));
     }
-    tableEntryPoint!.append(tr);
   }
 }
 
