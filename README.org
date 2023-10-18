@@ -20,7 +20,8 @@
 - [X] Configure OAuth and relevant scopes for application.
 - [X] Determine some type of sane type system for sheet data.
 - [X] Read in data rows from sheets.
-- [ ] Implement comments modal
+- [ ] Make data table scrollable/sortable
+- [ ] Abstract viewport section, allowing switchable and closable panes
 - [ ] Implement views of data table
 - [ ] Determine mechanism of keeping track of citation number
 - [ ] Implement geocoding via address from pulled data: possible api is nominatim.

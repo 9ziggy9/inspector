@@ -163,6 +163,7 @@ function genTableTr(row: string[7]): HTMLElement {
     genTableTd(addr), genTableTd(time),
     genTableTd(dept), genTableTd(sign),
   );
+  tr.addEventListener("click", onClickDataRow); // pass cmnt here
   return tr;
 }
 
@@ -181,7 +182,18 @@ async function fetchAndPopulateData(id: string, rng: string): Promise<void> {
   populateDataTable(tableRows);
 }
 
+// viewport functions
+
 // event handlers
+function onClickDataRow(): void {
+  console.log("clicking data row");
+  const viewport = document.querySelector(".overlay") as HTMLElement;
+  const detailedView = document.createElement("div");
+  viewport!.style.display = "block";
+  detailedView!.innerText = "Hello, pane change!";
+  viewport!.appendChild(detailedView);
+}
+
 function onClickMenuBtn(): void {
   const dropdown = document.getElementById("dropdown");
   dropdown!.style.display = dropdown!.style.display === "none" ? "block" : "none";

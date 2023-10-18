@@ -127,9 +127,24 @@ header {
     margin: 0;  /* Removes default margin from the h1 element */
 }
 
-#map {
+#master-view {
+    position: relative;
     width: 100%;
     height: 350px;
+}
+#map {width:100%; height:100%;}
+.overlay {
+    position:absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: var(--my-dark-gray);
+    z-index: 2;
+    display: none;
+    animation: slideinX 500ms;
+}
+@keyframes slideinX {
+    from { transform: translateX(-100%); }
+    to   { transform: translateX(0%); }
 }
 
 #data-pane {
