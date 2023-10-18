@@ -155,9 +155,18 @@ header {
     grid-template-columns: 1fr 1fr 3fr 1fr 1fr 1fr;
     width: 100%;
     background-color: var(--my-dark-gray);
+    cursor: pointer;
+}
+#data-pane tbody tr:hover {
+    background-color: var(--my-cyan);
+    color: var(--my-black);
 }
 #data-pane tbody tr:nth-child(odd) {
     background-color: var(--my-light-gray);
+}
+#data-pane tbody tr:nth-child(odd):hover {
+    background-color: var(--my-cyan);
+    color: var(--my-black);
 }
 #data-pane tbody tr td {
     display: flex;
