@@ -132,6 +132,42 @@ async function loadGisClient(): Promise<boolean> {
   })
 }
 
+// data population
+function normalizeSheetData(): any[][][] { // has to be a better data type here...
+  if (!SHEET_DATA) throw new Error("Attempting to populate table pre-fetch.");
+  const tableData = SHEET_DATA
+    .map(({range, values}) => values!
+    .map(vs => [
+      range!.slice(0, range!.indexOf('!')), // inspector name
+      vs[0],    // date
+      vs[1],    // address
+      vs[6],    // time
+      vs[7],    // dept
+      vs[11],   // signs
+      vs[12],   // comment
+    ]));
+  return tableData;
+}
+
+function populateDataTable(rows: any[][][]): void {
+  const tableEntryPoint = document.getElementById("table-entry-point");
+  for (const r of rows) {
+    const tr = document.createElement("tr");
+    for (const header of r) {
+      const th = document.createElement("th");
+      th.textContent = header as unknown as string;
+      tr.appendChild(th);
+    }
+    tableEntryPoint!.append(tr);
+  }
+}
+
+async function fetchAndPopulateData(id: string, rng: string): Promise<void> {
+  SHEET_DATA = await getAllSheetData(id, rng);
+  const tableRows = normalizeSheetData();
+  populateDataTable(tableRows);
+}
+
 // event handlers
 function onClickMenuBtn(): void {
   const dropdown = document.getElementById("dropdown");
@@ -145,8 +181,7 @@ function onClickLoginBtn(): void {
     const logoutBtn  = document.querySelector(".logout-btn") as HTMLElement;
     loginBtn!.style.display = "none";
     logoutBtn!.style.display = "block";
-    SHEET_DATA = await getAllSheetData(_SHEET_ID, "A13:M"); // unhardcode
-    console.log(SHEET_DATA);
+    await fetchAndPopulateData(_SHEET_ID, "A13:M"); // unhardcode
   };
   TOKEN_CLIENT.requestAccessToken({
     "prompt": gapi.client.getToken() ? "consent" : ""
@@ -169,6 +204,9 @@ function onClickLogoutBtn(): void {
         loginBtn!.style.display = "block";
         logoutBtn!.style.display = "none";
       });
+    // purge populated data
+    SHEET_DATA = [];
+    document.getElementById("table-entry-point")!.innerHTML = "";
   }
 }
 
