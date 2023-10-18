@@ -13,7 +13,7 @@ import Feature from "ol/Feature";
 import {Icon, Style} from "ol/style";
 // END OpenLayer
 
-import {_API_KEY, _DISC_DOC, _SCOPES, _CLIENT_ID} from "./secrets.js";
+import {_API_KEY, _DISC_DOC, _SCOPES, _CLIENT_ID, _SHEET_ID} from "./secrets.js";
 
 // Types
 type Coord = olCoord.Coordinate;
@@ -66,12 +66,50 @@ type TokenClient = {
 
 let TOKEN_CLIENT: TokenClient;
 
+// sheet interface
+type ValueRange = gapi.client.sheets.ValueRange;
+let SHEET_DATA: ValueRange[]; // GLOBAL SHEET DATA OBJECT
+
+async function getAllSheetNames(id: string): Promise<string[]> {
+  try {
+    const response = await gapi.client.sheets.spreadsheets.get({spreadsheetId: id});
+    if (!response.result.sheets) throw new Error("No sheets in spreadsheets.");
+    return response.result.sheets.map(s => s.properties?.title || "");
+  } catch (e) {
+    console.error("Error fetching sheet names:", e);
+    throw e;
+  }
+}
+
+async function getSheetData(id: string, rng: string): Promise<ValueRange> {
+  try {
+    const response = await gapi.client.sheets.spreadsheets.values.get({
+      spreadsheetId: id,
+      range: rng,
+    });
+    if (!response.result.values || response.result.values.length === 0) {
+      throw new Error("No data found in the sheet.");
+    } else {
+      return response.result;
+    }
+  } catch (e) {
+    console.error("Error fetching sheet data:", e);
+    throw e;
+  }
+}
+
+async function getAllSheetData(id: string, rng: string): Promise<ValueRange[]> {
+  const names = await getAllSheetNames(id);
+  const allDataPromises = names.map(n => getSheetData(id, `${n}!${rng}`));
+  return Promise.all(allDataPromises);
+}
+
 async function loadGapiClient(): Promise<boolean> {
   return new Promise(async (resolve, reject) => {
     try {
       await gapi.load("client", () => {
         gapi.client.init({apiKey: _API_KEY, discoveryDocs: [_DISC_DOC]})
-      })
+      });
       resolve(true);
     } catch {
       reject(false);
@@ -101,12 +139,14 @@ function onClickMenuBtn(): void {
 }
 
 function onClickLoginBtn(): void {
-  TOKEN_CLIENT.callback = function(resp: GapiError) {
+  TOKEN_CLIENT.callback = async function(resp: GapiError) {
     if (resp.error !== undefined) throw resp;
     const loginBtn   = document.querySelector(".login-btn") as HTMLElement;
     const logoutBtn  = document.querySelector(".logout-btn") as HTMLElement;
     loginBtn!.style.display = "none";
     logoutBtn!.style.display = "block";
+    SHEET_DATA = await getAllSheetData(_SHEET_ID, "A13:M"); // unhardcode
+    console.log(SHEET_DATA);
   };
   TOKEN_CLIENT.requestAccessToken({
     "prompt": gapi.client.getToken() ? "consent" : ""
@@ -124,8 +164,8 @@ function onClickLogoutBtn(): void {
       token.access_token,
       function(): void {
         gapi.client.setToken(null);
-        const loginBtn = document.querySelector(".login-btn") as HTMLElement;
-        const logoutBtn  = document.querySelector(".logout-btn") as HTMLElement;
+        const loginBtn  = document.querySelector(".login-btn") as HTMLElement;
+        const logoutBtn = document.querySelector(".logout-btn") as HTMLElement;
         loginBtn!.style.display = "block";
         logoutBtn!.style.display = "none";
       });

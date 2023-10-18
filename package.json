@@ -12,6 +12,7 @@
   "devDependencies": {
     "@types/gapi": "^0.0.45",
     "@types/gapi.auth2": "^0.0.58",
+    "@types/gapi.client.sheets": "^4.0.20201031",
     "@types/google.accounts": "^0.0.12",
     "@types/ol": "^7.0.0",
     "copy-webpack-plugin": "^11.0.0",
