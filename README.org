@@ -16,11 +16,13 @@
 - [X] Decouple production branch into private repository.
 - [X] Implement deployment pipeline to serve webpack from GH pages.
 - [X] Establish very simple OpenLayer API bundle in main application.
-- [ ] Obtain list of users for OAuth
-- [ ] Configure OAuth and relevant scopes for application.
-- [ ] Determine some type of sane type system for sheet data.
-- [ ] Homebrewed ORM/interface to sheets, ideally no exposure of keys should occur.
-- [ ] Read in data rows from sheets.
+- [X] Obtain list of users for OAuth
+- [X] Configure OAuth and relevant scopes for application.
+- [X] Determine some type of sane type system for sheet data.
+- [X] Read in data rows from sheets.
+- [ ] Implement comments modal
+- [ ] Implement views of data table
+- [ ] Determine mechanism of keeping track of citation number
 - [ ] Implement geocoding via address from pulled data: possible api is nominatim.
 - [ ] Implement statistical modal/interface for data.
 - [ ] Bundle some charting library for data visualization.
