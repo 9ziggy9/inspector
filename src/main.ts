@@ -15,23 +15,6 @@ import {Icon, Style} from "ol/style";
 
 import {_API_KEY, _DISC_DOC, _SCOPES, _CLIENT_ID, _SHEET_ID} from "./secrets.js";
 
-// Types
-type Coord = olCoord.Coordinate;
-
-// SHOULD GO TO DEDICATE GLOBALS FILE
-const ROSEVILLE_COORD: Coord = [-121.2880,38.7521];
-
-const urlNominatimSearch = (addr: string): string =>
-  `https://nominatim.openstreetmap.org/search?format=json&q=${addr}`;
-
-// Consider changing to a structured query which accepts a UrlSearchParms obj.
-async function geocodeAddr(addr: string): Promise<[Coord, Coord]> {
-  const res = await fetch(urlNominatimSearch(addr+",Roseville,CA"));
-  const [{lon, lat}] = await res.json();
-  if (lon && lat) return [lon, lat];
-  else throw new Error("Address not found");
-}
-
 const newMap = (): Map => new Map({
   controls: [],
   target: "map",
@@ -132,6 +115,21 @@ async function loadGisClient(): Promise<boolean> {
   })
 }
 
+// geolocation functions
+type Coord = olCoord.Coordinate;
+const ROSEVILLE_COORD: Coord = [-121.2880,38.7521];
+const urlNominatimSearch = (addr: string): string =>
+  `https://nominatim.openstreetmap.org/search?format=json&q=${addr}`;
+
+// Consider changing to a structured query which accepts a UrlSearchParms obj.
+async function geocodeAddr(addr: string): Promise<[Coord, Coord]> {
+  const res = await fetch(urlNominatimSearch(addr+",Roseville,CA"));
+  const [{lon, lat}] = await res.json();
+  if (lon && lat) return [lon, lat];
+  else throw new Error("Address not found");
+}
+
+
 // data population
 function normalizeSheetData(): any[][][] { // has to be a better data type here...
   if (!SHEET_DATA) throw new Error("Attempting to populate table pre-fetch.");
@@ -163,7 +161,7 @@ function genTableTr(row: string[7]): HTMLElement {
     genTableTd(addr), genTableTd(time),
     genTableTd(dept), genTableTd(sign),
   );
-  tr.addEventListener("click", onClickDataRow); // pass cmnt here
+  tr.addEventListener("click", () => onClickDataRow(cmnt)); // pass cmnt here
   return tr;
 }
 
@@ -183,20 +181,46 @@ async function fetchAndPopulateData(id: string, rng: string): Promise<void> {
 }
 
 // viewport functions
+function unmountDetailedView(): void {
+  const detailedView = document.querySelector(".detailed-view");
+  if (!detailedView) return;
+  const viewport = document.querySelector(".overlay") as HTMLElement;
+  viewport.removeChild(detailedView);
+  viewport!.style.display = "none";
+}
 
 // event handlers
-function onClickDataRow(): void {
-  console.log("clicking data row");
-  const viewport = document.querySelector(".overlay") as HTMLElement;
-  const detailedView = document.createElement("div");
+function onClickDataRow(cmnt: string): void {
+  unmountDetailedView();
+  const viewport         = document.querySelector(".overlay") as HTMLElement;
+  const detailedView     = document.createElement("div");
+  const commentHeader    = document.createElement("h1");
+  const commentParagraph = document.createElement("p");
+  const backArrow        = document.createElement("span");
+  backArrow!.classList.add("material-symbols-outlined", "close-btn");
+  backArrow!.innerText = "arrow_back";
+  backArrow!.addEventListener("click", unmountDetailedView);
+  commentHeader!.innerText = "Comments:";
+  commentParagraph!.innerText = cmnt.length ? cmnt : "No comments to display";
+  detailedView!.classList.add("detailed-view");
+  detailedView!.append(
+    commentHeader, commentParagraph, backArrow
+  );
   viewport!.style.display = "block";
-  detailedView!.innerText = "Hello, pane change!";
-  viewport!.appendChild(detailedView);
+  viewport!.append(
+    detailedView, backArrow
+  );
 }
 
 function onClickMenuBtn(): void {
   const dropdown = document.getElementById("dropdown");
   dropdown!.style.display = dropdown!.style.display === "none" ? "block" : "none";
+}
+
+async function testGeolocateAddrs() {
+  const data = normalizeSheetData()
+    .map(row => row[2]);
+  console.log(data);
 }
 
 function onClickLoginBtn(): void {
@@ -206,7 +230,8 @@ function onClickLoginBtn(): void {
     const logoutBtn  = document.querySelector(".logout-btn") as HTMLElement;
     loginBtn!.style.display = "none";
     logoutBtn!.style.display = "block";
-    await fetchAndPopulateData(_SHEET_ID, "A13:M"); // unhardcode
+    await fetchAndPopulateData(_SHEET_ID, "A13:M"); // unhardcode range
+    await testGeolocateAddrs();
   };
   TOKEN_CLIENT.requestAccessToken({
     "prompt": gapi.client.getToken() ? "consent" : ""

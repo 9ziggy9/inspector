@@ -134,10 +134,9 @@ header {
 }
 #map {width:100%; height:100%;}
 .overlay {
-    position:absolute;
+    position: absolute;
     top: 0; left: 0;
     width: 100%; height: 100%;
-    background-color: var(--my-dark-gray);
     z-index: 2;
     display: none;
     animation: slideinX 500ms;
@@ -146,7 +145,22 @@ header {
     from { transform: translateX(-100%); }
     to   { transform: translateX(0%); }
 }
-
+.detailed-view {
+    width:100%;
+    height:100%;
+    box-sizing: border-box;
+    background-color: var(--my-light-gray);
+    color: var(--my-black);
+    padding: 3rem;
+    animation: slideinX 500ms;
+}
+.close-btn {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    font-size: 40px;
+    cursor: pointer;
+}
 #data-pane {
     margin: 0;
     padding: 0;
