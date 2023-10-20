@@ -147,24 +147,24 @@ async function geocodeAddr(addr: string): Promise<[Coord, Coord]> {
     }
    */
 type CitationEntry = {
-  date: string,
-  addr: string,
-  time: string,
-  dept: string,
-  sign: string,
-  cite: string,
-  cmnt: string,
+  id: string, date: string, addr: string,
+  time: string, dept: string, sign: string,
+  cite: string, cmnt: string,
 };
 type CitationTable = {
   [insp: string]: CitationEntry[];
 };
 
+const sliceNameFromRange = (rng: string | undefined) => rng!
+  .slice(0, rng!.indexOf('!'));
+
 function normalizeSheetData(): CitationTable {
   if (!SHEET_DATA) throw new Error("Attempting to populate table pre-fetch.");
   return <CitationTable> SHEET_DATA.reduce((table, {range, values}) => ({
     ...table,
-    [range!.slice(0, range!.indexOf('!'))]: values!
-      .map(vs => ({
+    [sliceNameFromRange(range)]: values!
+      .map((vs, vId) => ({
+        "id":   `${sliceNameFromRange(range)}-${vId}`,
         "date": vs[0],   // date
         "addr": vs[1],   // address
         "time": vs[6],   // time
@@ -184,7 +184,8 @@ function genTableTd(data: string): HTMLElement {
 
 function genTableTr(insp: string, row: CitationEntry): HTMLElement {
   const tr = document.createElement("tr");
-  const {date, addr, time, dept, sign, cite, cmnt} = row;
+  const {id, date, addr, time, dept, sign, cite, cmnt} = row;
+  tr.id = id;
   tr.append(
     genTableTd(insp), genTableTd(date),
     genTableTd(addr), genTableTd(time),
