@@ -189,6 +189,7 @@ function genTableTr(insp: string, row: CitationEntry): HTMLElement {
     genTableTd(insp), genTableTd(date),
     genTableTd(addr), genTableTd(time),
     genTableTd(dept), genTableTd(sign),
+    genTableTd(cite),
   );
   tr.addEventListener("click", () => onClickDataRow(cmnt)); // pass cmnt here
   return tr;
