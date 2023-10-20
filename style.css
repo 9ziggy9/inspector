@@ -168,7 +168,12 @@ header {
     height: 100%;
     background-color: var(--my-blue);
 }
-#data-pane table {width: 100%; margin:0; padding:0;}
+#data-pane table {
+    width: 100%;
+    display: none; /* toggles to table */
+    margin:0;
+    padding:0;
+}
 #data-pane thead {width: 100%;}
 #data-pane thead tr {
     /* border: 2px solid var(--my-light-gray); */
@@ -206,7 +211,7 @@ header {
     position: relative;
     width: 100%;
     height: 50%;
-    display: flex;
+    display: none; /* visibility changes to flex */
     justify-content: center;
     align-items: center;
 }

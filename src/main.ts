@@ -255,14 +255,24 @@ function onClickMenuBtn(): void {
 //   console.log(data);
 // }
 
+const __artificialDelay = (ms: number): Promise<void> => new Promise((res) =>
+  setTimeout(() => res(), ms));
+
 function onClickLoginBtn(): void {
   TOKEN_CLIENT.callback = async function(resp: GapiError) {
     if (resp.error !== undefined) throw resp;
     const loginBtn   = document.querySelector(".login-btn") as HTMLElement;
     const logoutBtn  = document.querySelector(".logout-btn") as HTMLElement;
+    const loadScrn   = document.getElementById("table-load-pane") as HTMLElement;
+    const tableScrn  = document.querySelector("#data-pane table") as HTMLElement;
+    loadScrn!.style.display = "flex";
     loginBtn!.style.display = "none";
     logoutBtn!.style.display = "block";
     await fetchAndPopulateData(_SHEET_ID, "A13:M"); // unhardcode range
+    await __artificialDelay(2000); // remove me eventually
+    loadScrn!.style.display = "none";
+    tableScrn!.style.display = "table";
+
     // await testGeolocateAddrs();
   };
   TOKEN_CLIENT.requestAccessToken({
