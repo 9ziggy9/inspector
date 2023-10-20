@@ -131,20 +131,49 @@ async function geocodeAddr(addr: string): Promise<[Coord, Coord]> {
 
 
 // data population
-function normalizeSheetData(): any[][][] { // has to be a better data type here...
+  /*
+    Normalizing data to the following structure:
+    {
+      "name1": [
+        [date, addr, time, dept, signs, cit, comment],
+        [date, addr, time, dept, signs, cit, comment],
+        [date, addr, time, dept, signs, cit, comment],
+        ],
+      "name2": [
+        [date, addr, time, dept, signs, cit, comment],
+        [date, addr, time, dept, signs, cit, comment],
+        [date, addr, time, dept, signs, cit, comment],
+      ]
+    }
+   */
+type CitationEntry = {
+  date: string,
+  addr: string,
+  time: string,
+  dept: string,
+  sign: string,
+  cite: string,
+  cmnt: string,
+};
+type CitationTable = {
+  [insp: string]: CitationEntry[];
+};
+
+function normalizeSheetData(): CitationTable {
   if (!SHEET_DATA) throw new Error("Attempting to populate table pre-fetch.");
-  const tableData = SHEET_DATA
-    .map(({range, values}) => values!
-    .map(vs => [
-      range!.slice(0, range!.indexOf('!')), // inspector name
-      vs[0],    // date
-      vs[1],    // address
-      vs[6],    // time
-      vs[7],    // dept
-      vs[11],   // signs
-      vs[12],   // comment
-    ]));
-  return tableData;
+  return <CitationTable> SHEET_DATA.reduce((table, {range, values}) => ({
+    ...table,
+    [range!.slice(0, range!.indexOf('!'))]: values!
+      .map(vs => ({
+        "date": vs[0],   // date
+        "addr": vs[1],   // address
+        "time": vs[6],   // time
+        "dept": vs[7],   // dept
+        "sign": vs[9],   // signs
+        "cite": vs[11],  // citation num
+        "cmnt": vs[12],  // comment
+      })),
+  }), {});
 }
 
 function genTableTd(data: string): HTMLElement {
@@ -153,11 +182,11 @@ function genTableTd(data: string): HTMLElement {
   return td;
 }
 
-function genTableTr(row: string[7]): HTMLElement {
+function genTableTr(insp: string, row: CitationEntry): HTMLElement {
   const tr = document.createElement("tr");
-  const [name,date,addr,time,dept,sign,cmnt] = row;
+  const {date, addr, time, dept, sign, cite, cmnt} = row;
   tr.append(
-    genTableTd(name), genTableTd(date),
+    genTableTd(insp), genTableTd(date),
     genTableTd(addr), genTableTd(time),
     genTableTd(dept), genTableTd(sign),
   );
@@ -165,19 +194,20 @@ function genTableTr(row: string[7]): HTMLElement {
   return tr;
 }
 
-function populateDataTable(data: any[][][]): void {
+function populateDataTable(data: CitationTable): void {
   const tableEntryPoint = document.getElementById("table-entry-point");
-  for (const inspEntries of data) {
-    for (const row of inspEntries) {
-      tableEntryPoint!.appendChild(genTableTr(row as unknown as string));
+  for (const insp of Object.keys(data)) {
+    for (const row of data[insp]) {
+      tableEntryPoint!.appendChild(genTableTr(insp, row));
     }
   }
 }
 
 async function fetchAndPopulateData(id: string, rng: string): Promise<void> {
   SHEET_DATA = await getAllSheetData(id, rng);
-  const tableRows = normalizeSheetData();
-  populateDataTable(tableRows);
+  const data = normalizeSheetData();
+  console.log(data);
+  populateDataTable(data);
 }
 
 // viewport functions
@@ -217,11 +247,11 @@ function onClickMenuBtn(): void {
   dropdown!.style.display = dropdown!.style.display === "none" ? "block" : "none";
 }
 
-async function testGeolocateAddrs() {
-  const data = normalizeSheetData()
-    .map(row => row[2]);
-  console.log(data);
-}
+// async function testGeolocateAddrs() {
+//   const data = normalizeSheetData()
+//     .map(row => row[2]);
+//   console.log(data);
+// }
 
 function onClickLoginBtn(): void {
   TOKEN_CLIENT.callback = async function(resp: GapiError) {
@@ -231,7 +261,7 @@ function onClickLoginBtn(): void {
     loginBtn!.style.display = "none";
     logoutBtn!.style.display = "block";
     await fetchAndPopulateData(_SHEET_ID, "A13:M"); // unhardcode range
-    await testGeolocateAddrs();
+    // await testGeolocateAddrs();
   };
   TOKEN_CLIENT.requestAccessToken({
     "prompt": gapi.client.getToken() ? "consent" : ""
