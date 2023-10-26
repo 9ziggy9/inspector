@@ -46,12 +46,10 @@ type TokenClient = {
   callback?: (resp: any) => void;
   requestAccessToken: (options: any) => void;
 };
-
 let TOKEN_CLIENT: TokenClient;
 
 // sheet interface
 type ValueRange = gapi.client.sheets.ValueRange;
-let SHEET_DATA: ValueRange[]; // GLOBAL SHEET DATA OBJECT
 
 async function getAllSheetNames(id: string): Promise<string[]> {
   try {
@@ -129,7 +127,6 @@ async function geocodeAddr(addr: string): Promise<[Coord, Coord]> {
   else throw new Error("Address not found");
 }
 
-
 // data population
   /*
     Normalizing data to the following structure:
@@ -158,9 +155,9 @@ type CitationTable = {
 const sliceNameFromRange = (rng: string | undefined) => rng!
   .slice(0, rng!.indexOf('!'));
 
-function normalizeSheetData(): CitationTable {
-  if (!SHEET_DATA) throw new Error("Attempting to populate table pre-fetch.");
-  return <CitationTable> SHEET_DATA.reduce((table, {range, values}) => ({
+function normalizeSheetData(sheetData: ValueRange[]): CitationTable {
+  if (!sheetData) throw new Error("Attempting to populate table pre-fetch.");
+  return <CitationTable> sheetData.reduce((table, {range, values}) => ({
     ...table,
     [sliceNameFromRange(range)]: values!
       .map((vs, vId) => ({
@@ -196,20 +193,25 @@ function genTableTr(insp: string, row: CitationEntry): HTMLElement {
   return tr;
 }
 
-function populateDataTable(data: CitationTable): void {
+function populateDataTable(citationTable: CitationTable): void {
   const tableEntryPoint = document.getElementById("table-entry-point");
-  for (const insp of Object.keys(data)) {
-    for (const row of data[insp]) {
+  for (const insp of Object.keys(citationTable)) {
+    for (const row of citationTable[insp]) {
       tableEntryPoint!.appendChild(genTableTr(insp, row));
     }
   }
 }
 
-async function fetchAndPopulateData(id: string, rng: string): Promise<void> {
-  SHEET_DATA = await getAllSheetData(id, rng);
-  const data = normalizeSheetData();
-  console.log(data);
-  populateDataTable(data);
+async function fetchAndPopulateData(
+  sheetData: ValueRange[],
+  citationTable: CitationTable,
+  id: string,
+  rng: string,
+): Promise<void> {
+  sheetData = await getAllSheetData(id, rng);
+  citationTable = normalizeSheetData(sheetData);
+  console.log(citationTable);
+  populateDataTable(citationTable);
 }
 
 // viewport functions
@@ -258,7 +260,10 @@ function onClickMenuBtn(): void {
 const __artificialDelay = (ms: number): Promise<void> => new Promise((res) =>
   setTimeout(() => res(), ms));
 
-function onClickLoginBtn(): void {
+function onClickLoginBtn(
+  sheetData: ValueRange[],
+  citationTable: CitationTable,
+): void {
   TOKEN_CLIENT.callback = async function(resp: GapiError) {
     if (resp.error !== undefined) throw resp;
     const loginBtn   = document.querySelector(".login-btn") as HTMLElement;
@@ -268,12 +273,12 @@ function onClickLoginBtn(): void {
     loadScrn!.style.display = "flex";
     loginBtn!.style.display = "none";
     logoutBtn!.style.display = "block";
-    await fetchAndPopulateData(_SHEET_ID, "A13:M"); // unhardcode range
+    await fetchAndPopulateData(
+      sheetData, citationTable, _SHEET_ID, "A13:M"
+    ); // unhardcode range
     await __artificialDelay(2000); // remove me eventually
     loadScrn!.style.display = "none";
     tableScrn!.style.display = "table";
-
-    // await testGeolocateAddrs();
   };
   TOKEN_CLIENT.requestAccessToken({
     "prompt": gapi.client.getToken() ? "consent" : ""
@@ -284,7 +289,10 @@ function onClickLoginBtn(): void {
   }
 }
 
-function onClickLogoutBtn(): void {
+function onClickLogoutBtn(
+  sheetData: ValueRange[],
+  citationTable: CitationTable,
+): void {
   const token = gapi.client.getToken();
   if (token !== null) {
     google.accounts.oauth2.revoke(
@@ -297,7 +305,8 @@ function onClickLogoutBtn(): void {
         logoutBtn!.style.display = "none";
       });
     // purge populated data
-    SHEET_DATA = [];
+    sheetData = [];
+    citationTable = {};
     document.getElementById("table-entry-point")!.innerHTML = "";
   }
 }
@@ -313,18 +322,29 @@ function onClickHelpBtn(): void {
 }
 
 // attach event handlers
-function attachToolbarHandlers(): void {
+function attachToolbarHandlers(
+  sheetData: ValueRange[],
+  citationTable: CitationTable,
+): void {
   const loginBtn  = document.querySelector(".login-btn");
   const logoutBtn = document.querySelector(".logout-btn");
   const menuBtn   = document.querySelector(".menu-btn");
   const helpBtn   = document.querySelector(".help-btn");
-  loginBtn!.addEventListener("click", onClickLoginBtn);
+  loginBtn!.addEventListener(
+    "click", () => onClickLoginBtn(sheetData, citationTable)
+  );
+  logoutBtn!.addEventListener(
+    "click", () => onClickLogoutBtn(sheetData, citationTable)
+  );
   menuBtn!.addEventListener("click",  onClickMenuBtn);
   helpBtn!.addEventListener("click",  onClickHelpBtn);
-  logoutBtn!.addEventListener("click", onClickLogoutBtn);
 }
 
 async function main() {
+  // session state data
+  let SHEET_DATA: ValueRange[] = [];
+  let CITATION_TABLE: CitationTable = {};
+
   // Load and initialize gapi/gis
   const flags: initFlags = {
     gapi: await loadGapiClient(),
@@ -332,7 +352,7 @@ async function main() {
   };
 
   // Handlers
-  attachToolbarHandlers();
+  attachToolbarHandlers(SHEET_DATA, CITATION_TABLE);
 
   // Configure OL Map
   const map = newMap();
