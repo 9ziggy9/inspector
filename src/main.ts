@@ -19,7 +19,7 @@ const newMap = (): Map => new Map({
   controls: [],
   target: "map",
   layers: [
-    new TileLayer({
+   new TileLayer({
       source: new OSM(),
     }),
   ],
@@ -147,6 +147,7 @@ type CitationEntry = {
   id: string, date: string, addr: string,
   time: string, dept: string, sign: string,
   cite: string, cmnt: string,
+  latlon?: [Coord, Coord] | null,
 };
 type CitationTable = {
   [insp: string]: CitationEntry[];
@@ -155,7 +156,7 @@ type CitationTable = {
 const sliceNameFromRange = (rng: string | undefined) => rng!
   .slice(0, rng!.indexOf('!'));
 
-function normalizeSheetData(sheetData: ValueRange[]): CitationTable {
+async function normalizeSheetData(sheetData: ValueRange[]): Promise<CitationTable> {
   if (!sheetData) throw new Error("Attempting to populate table pre-fetch.");
   return <CitationTable> sheetData.reduce((table, {range, values}) => ({
     ...table,
@@ -207,11 +208,12 @@ async function fetchAndPopulateData(
   citationTable: CitationTable,
   id: string,
   rng: string,
-): Promise<void> {
+): Promise<CitationTable> {
   sheetData = await getAllSheetData(id, rng);
-  citationTable = normalizeSheetData(sheetData);
+  citationTable = await normalizeSheetData(sheetData);
   console.log(citationTable);
   populateDataTable(citationTable);
+  return citationTable;
 }
 
 // viewport functions
@@ -260,6 +262,24 @@ function onClickMenuBtn(): void {
 const __artificialDelay = (ms: number): Promise<void> => new Promise((res) =>
   setTimeout(() => res(), ms));
 
+async function appendLatLonField(entry: CitationEntry): Promise<CitationEntry> {
+  const latlon = await geocodeAddr(entry["addr"]);
+  if (!latlon) return entry;
+  return {
+    ...entry,
+    latlon
+  };
+}
+
+async function geolocateData(citationTable: CitationTable): Promise<CitationTable> {
+  let geolocatedData: CitationTable = {};
+  for (const insp of Object.keys(citationTable)) {
+    geolocatedData[insp] = await Promise.all(citationTable[insp]
+      .map(entry => appendLatLonField(entry)));
+  }
+  return geolocatedData;
+}
+
 function onClickLoginBtn(
   sheetData: ValueRange[],
   citationTable: CitationTable,
@@ -273,10 +293,12 @@ function onClickLoginBtn(
     loadScrn!.style.display = "flex";
     loginBtn!.style.display = "none";
     logoutBtn!.style.display = "block";
-    await fetchAndPopulateData(
+    citationTable = await fetchAndPopulateData(
       sheetData, citationTable, _SHEET_ID, "A13:M"
     ); // unhardcode range
-    await __artificialDelay(2000); // remove me eventually
+    citationTable = await geolocateData(citationTable);
+    // await __artificialDelay(2000); // remove me eventually
+    console.log("POST GEOLOCATE: ", citationTable);
     loadScrn!.style.display = "none";
     tableScrn!.style.display = "table";
   };
