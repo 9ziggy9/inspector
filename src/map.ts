@@ -13,7 +13,7 @@ import {Icon, Style, Fill, Stroke, Circle} from "ol/style";
 import * as olCoord from "ol/coordinate";
 // END OpenLayer
 
-const RADIUS_PIN = 7;
+const RADIUS_PIN = 3;
 enum PinColor {
     Base03 = '#002B36',  // Background
     Base02 = '#073642',  // Content background
