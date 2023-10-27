@@ -8,11 +8,14 @@ const urlNominatimSearch = (addr: string): string =>
   `https://nominatim.openstreetmap.org/search?format=json&q=${addr}`;
 
 // Consider changing to a structured query which accepts a UrlSearchParms obj.
-async function geocodeAddr(addr: string): Promise<[Coord, Coord]> {
+async function geocodeAddr(addr: string): Promise<[Coord, Coord] | null> {
   const res = await fetch(urlNominatimSearch(addr+",Roseville,CA"));
-  const [{lon, lat}] = await res.json();
-  if (lon && lat) return [lon, lat];
-  else throw new Error("Address not found");
+  const data = await res.json();
+  if (data.length) {
+    const [{lon, lat}] = data;
+    return [lon, lat];
+  }
+  return null;
 }
 
 async function appendLatLonField(entry: CitationEntry): Promise<CitationEntry> {
