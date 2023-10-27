@@ -20,10 +20,13 @@
 - [X] Configure OAuth and relevant scopes for application.
 - [X] Determine some type of sane type system for sheet data.
 - [X] Read in data rows from sheets.
+- [X] Abstract viewport section, allowing switchable and closable panes
+- [X] Implement geocoding via address from pulled data: possible api is nominatim.
+- [X] Cache nominatim results locally
+- [ ] Please implement backoff algorithm for nominatim searching, limit 1 req per 2 seconds.
+- [ ] Indicate when no cache is available so users don't pull their hair out.
 - [ ] Make data table scrollable/sortable
-- [ ] Abstract viewport section, allowing switchable and closable panes
 - [ ] Implement views of data table
 - [ ] Determine mechanism of keeping track of citation number
-- [ ] Implement geocoding via address from pulled data: possible api is nominatim.
 - [ ] Implement statistical modal/interface for data.
 - [ ] Bundle some charting library for data visualization.
