@@ -1,7 +1,7 @@
 import {ROSEVILLE_COORD, geolocateData} from "./geo";
 import {getAllSheetData, normalizeSheetData} from "./sheets";
 import {_API_KEY, _DISC_DOC, _SCOPES, _CLIENT_ID, _SHEET_ID} from "./secrets";
-import {newMap} from "./map";
+import {newMap, addCirclePin} from "./map";
 
 let TOKEN_CLIENT: TokenClient;
 
@@ -213,6 +213,9 @@ async function main() {
 
   // Configure OL Map
   const map = newMap(ROSEVILLE_COORD);
+
+  // Testing pins
+  addCirclePin(map, ROSEVILLE_COORD);
 }
 
 window.onload = main;
