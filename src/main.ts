@@ -5,7 +5,6 @@ import TileLayer from "ol/layer/Tile";
 import OSM from "ol/source/OSM";
 import * as mapControls from "ol/control";
 import * as projection from "ol/proj";
-import * as olCoord from "ol/coordinate";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import Point from "ol/geom/Point";
@@ -13,7 +12,11 @@ import Feature from "ol/Feature";
 import {Icon, Style} from "ol/style";
 // END OpenLayer
 
-import {_API_KEY, _DISC_DOC, _SCOPES, _CLIENT_ID, _SHEET_ID} from "./secrets.js";
+import {ROSEVILLE_COORD, geolocateData} from "./geo";
+import {getAllSheetData, normalizeSheetData} from "./sheets";
+import {_API_KEY, _DISC_DOC, _SCOPES, _CLIENT_ID, _SHEET_ID} from "./secrets";
+
+let TOKEN_CLIENT: TokenClient;
 
 const newMap = (): Map => new Map({
   controls: [],
@@ -29,61 +32,6 @@ const newMap = (): Map => new Map({
   }),
 });
 
-interface initFlags {
-  gapi: boolean;
-   gis: boolean;
-};
-interface GapiResponse {
-  result: {
-    values?: string[][];
-  };
-}
-interface GapiError {
-  error?: any;
-  message?: string;
-}
-type TokenClient = {
-  callback?: (resp: any) => void;
-  requestAccessToken: (options: any) => void;
-};
-let TOKEN_CLIENT: TokenClient;
-
-// sheet interface
-type ValueRange = gapi.client.sheets.ValueRange;
-
-async function getAllSheetNames(id: string): Promise<string[]> {
-  try {
-    const response = await gapi.client.sheets.spreadsheets.get({spreadsheetId: id});
-    if (!response.result.sheets) throw new Error("No sheets in spreadsheets.");
-    return response.result.sheets.map(s => s.properties?.title || "");
-  } catch (e) {
-    console.error("Error fetching sheet names:", e);
-    throw e;
-  }
-}
-
-async function getSheetData(id: string, rng: string): Promise<ValueRange> {
-  try {
-    const response = await gapi.client.sheets.spreadsheets.values.get({
-      spreadsheetId: id,
-      range: rng,
-    });
-    if (!response.result.values || response.result.values.length === 0) {
-      throw new Error("No data found in the sheet.");
-    } else {
-      return response.result;
-    }
-  } catch (e) {
-    console.error("Error fetching sheet data:", e);
-    throw e;
-  }
-}
-
-async function getAllSheetData(id: string, rng: string): Promise<ValueRange[]> {
-  const names = await getAllSheetNames(id);
-  const allDataPromises = names.map(n => getSheetData(id, `${n}!${rng}`));
-  return Promise.all(allDataPromises);
-}
 
 async function loadGapiClient(): Promise<boolean> {
   return new Promise(async (resolve, reject) => {
@@ -111,67 +59,6 @@ async function loadGisClient(): Promise<boolean> {
       reject(false);
     }
   })
-}
-
-// geolocation functions
-type Coord = olCoord.Coordinate;
-const ROSEVILLE_COORD: Coord = [-121.2880,38.7521];
-const urlNominatimSearch = (addr: string): string =>
-  `https://nominatim.openstreetmap.org/search?format=json&q=${addr}`;
-
-// Consider changing to a structured query which accepts a UrlSearchParms obj.
-async function geocodeAddr(addr: string): Promise<[Coord, Coord]> {
-  const res = await fetch(urlNominatimSearch(addr+",Roseville,CA"));
-  const [{lon, lat}] = await res.json();
-  if (lon && lat) return [lon, lat];
-  else throw new Error("Address not found");
-}
-
-// data population
-  /*
-    Normalizing data to the following structure:
-    {
-      "name1": [
-        [date, addr, time, dept, signs, cit, comment],
-        [date, addr, time, dept, signs, cit, comment],
-        [date, addr, time, dept, signs, cit, comment],
-        ],
-      "name2": [
-        [date, addr, time, dept, signs, cit, comment],
-        [date, addr, time, dept, signs, cit, comment],
-        [date, addr, time, dept, signs, cit, comment],
-      ]
-    }
-   */
-type CitationEntry = {
-  id: string, date: string, addr: string,
-  time: string, dept: string, sign: string,
-  cite: string, cmnt: string,
-  latlon?: [Coord, Coord] | null,
-};
-type CitationTable = {
-  [insp: string]: CitationEntry[];
-};
-
-const sliceNameFromRange = (rng: string | undefined) => rng!
-  .slice(0, rng!.indexOf('!'));
-
-async function normalizeSheetData(sheetData: ValueRange[]): Promise<CitationTable> {
-  if (!sheetData) throw new Error("Attempting to populate table pre-fetch.");
-  return <CitationTable> sheetData.reduce((table, {range, values}) => ({
-    ...table,
-    [sliceNameFromRange(range)]: values!
-      .map((vs, vId) => ({
-        "id":   `${sliceNameFromRange(range)}-${vId}`,
-        "date": vs[0],   // date
-        "addr": vs[1],   // address
-        "time": vs[6],   // time
-        "dept": vs[7],   // dept
-        "sign": vs[9],   // signs
-        "cite": vs[11],  // citation num
-        "cmnt": vs[12],  // comment
-      })),
-  }), {});
 }
 
 function genTableTd(data: string): HTMLElement {
@@ -253,32 +140,8 @@ function onClickMenuBtn(): void {
   dropdown!.style.display = dropdown!.style.display === "none" ? "block" : "none";
 }
 
-// async function testGeolocateAddrs() {
-//   const data = normalizeSheetData()
-//     .map(row => row[2]);
-//   console.log(data);
-// }
-
 const __artificialDelay = (ms: number): Promise<void> => new Promise((res) =>
   setTimeout(() => res(), ms));
-
-async function appendLatLonField(entry: CitationEntry): Promise<CitationEntry> {
-  const latlon = await geocodeAddr(entry["addr"]);
-  if (!latlon) return entry;
-  return {
-    ...entry,
-    latlon
-  };
-}
-
-async function geolocateData(citationTable: CitationTable): Promise<CitationTable> {
-  let geolocatedData: CitationTable = {};
-  for (const insp of Object.keys(citationTable)) {
-    geolocatedData[insp] = await Promise.all(citationTable[insp]
-      .map(entry => appendLatLonField(entry)));
-  }
-  return geolocatedData;
-}
 
 function onClickLoginBtn(
   sheetData: ValueRange[],
