@@ -212,6 +212,20 @@ header {
     width: 100%;
     height: 50%;
     display: none; /* visibility changes to flex */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+#table-load-pane > div {
+    margin: 0;
+    padding: 0;
+}
+#table-load-pane > p {
+    margin-top: 0;
+}
+#loading-line {
+    display: flex;
+    flex-direction: row;
     justify-content: center;
     align-items: center;
 }
