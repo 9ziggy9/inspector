@@ -14,6 +14,22 @@ import * as olCoord from "ol/coordinate";
 // END OpenLayer
 
 const RADIUS_PIN = 7;
+enum PinColor {
+    Base03 = '#002B36',  // Background
+    Base02 = '#073642',  // Content background
+    Base01 = '#586E75',  // Comments/Secondary content
+    Base00 = '#657B83',  // Body text/default code/primary content
+    Base0  = '#839496',  // Optional emphasized content
+    Base1  = '#93A1A1',  // Optional emphasized content (brighter)
+    Yellow = '#B58900',
+    Orange = '#CB4B16',
+    Red    = '#DC322F',
+    Magenta= '#D33682',
+    Violet = '#6C71C4',
+    Blue   = '#268BD2',
+    Cyan   = '#2AA198',
+    Green  = '#859900'
+}
 
 export const newMap = (centerCoord: olCoord.Coordinate): Map => new Map({
   controls: [],
@@ -29,7 +45,19 @@ export const newMap = (centerCoord: olCoord.Coordinate): Map => new Map({
   }),
 });
 
-export function addCirclePin(map: Map, coords: olCoord.Coordinate): void {
+export function pinAllData(map: Map, table: CitationTable): void {
+  console.log("Following table available:", table);
+  for (const insp of Object.keys(table)) {
+    for (const {id, latlon} of table[insp]) {
+      if (latlon) addCirclePin(map, latlon);
+    }
+  }
+}
+
+export function addCirclePin(
+  map: Map,
+  coords: olCoord.Coordinate,
+): void {
   const pinFeature = new Feature({
     geometry: new Point(projection.fromLonLat(coords))
   });
@@ -37,10 +65,10 @@ export function addCirclePin(map: Map, coords: olCoord.Coordinate): void {
     image: new Circle({
       radius: RADIUS_PIN,
       fill: new Fill({
-        color: "green", // reimplement with color coded by inspector
+        color: PinColor.Red, // reimplement with color coded by inspector
       }),
       stroke: new Stroke({
-        color: "white",
+        color: PinColor.Base00,
         width: 2,
       })
     }),

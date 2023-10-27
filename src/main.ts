@@ -1,7 +1,8 @@
 import {ROSEVILLE_COORD, geolocateData} from "./geo";
 import {getAllSheetData, normalizeSheetData} from "./sheets";
 import {_API_KEY, _DISC_DOC, _SCOPES, _CLIENT_ID, _SHEET_ID} from "./secrets";
-import {newMap, addCirclePin} from "./map";
+import {newMap, addCirclePin, pinAllData} from "./map";
+import Map from "ol/Map";
 
 let TOKEN_CLIENT: TokenClient;
 
@@ -118,6 +119,7 @@ const __artificialDelay = (ms: number): Promise<void> => new Promise((res) =>
 function onClickLoginBtn(
   sheetData: ValueRange[],
   citationTable: CitationTable,
+  map: Map,
 ): void {
   TOKEN_CLIENT.callback = async function(resp: GapiError) {
     if (resp.error !== undefined) throw resp;
@@ -134,6 +136,7 @@ function onClickLoginBtn(
     citationTable = await geolocateData(citationTable);
     // await __artificialDelay(2000); // remove me eventually
     console.log("POST GEOLOCATE: ", citationTable);
+    pinAllData(map, citationTable);
     loadScrn!.style.display = "none";
     tableScrn!.style.display = "table";
   };
@@ -182,13 +185,14 @@ function onClickHelpBtn(): void {
 function attachToolbarHandlers(
   sheetData: ValueRange[],
   citationTable: CitationTable,
+  map: Map,
 ): void {
   const loginBtn  = document.querySelector(".login-btn");
   const logoutBtn = document.querySelector(".logout-btn");
   const menuBtn   = document.querySelector(".menu-btn");
   const helpBtn   = document.querySelector(".help-btn");
   loginBtn!.addEventListener(
-    "click", () => onClickLoginBtn(sheetData, citationTable)
+    "click", () => onClickLoginBtn(sheetData, citationTable, map)
   );
   logoutBtn!.addEventListener(
     "click", () => onClickLogoutBtn(sheetData, citationTable)
@@ -208,14 +212,11 @@ async function main() {
     gis:  await loadGisClient()
   };
 
+  // Initialize OL Map
+  const MAP = newMap(ROSEVILLE_COORD);
+
   // Handlers
-  attachToolbarHandlers(SHEET_DATA, CITATION_TABLE);
-
-  // Configure OL Map
-  const map = newMap(ROSEVILLE_COORD);
-
-  // Testing pins
-  addCirclePin(map, ROSEVILLE_COORD);
+  attachToolbarHandlers(SHEET_DATA, CITATION_TABLE, MAP);
 }
 
 window.onload = main;
