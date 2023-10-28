@@ -10,10 +10,12 @@ import VectorSource from "ol/source/Vector";
 import Point from "ol/geom/Point";
 import Feature from "ol/Feature";
 import {Icon, Style, Fill, Stroke, Circle} from "ol/style";
+import {Select} from "ol/interaction";
+import {pointerMove} from "ol/events/condition";
 import * as olCoord from "ol/coordinate";
 // END OpenLayer
 
-const RADIUS_PIN = 5;
+const RADIUS_PIN = 6;
 enum PinColor {
     Base03 = '#002B36',  // Background
     Base02 = '#073642',  // Content background
@@ -49,7 +51,7 @@ export function pinAllData(map: Map, table: CitationTable): void {
   console.log("Following table available:", table);
   for (const insp of Object.keys(table)) {
     for (const {id, latlon} of table[insp]) {
-      if (latlon) addCirclePin(map, latlon);
+      if (latlon) addCirclePin(map, latlon, id);
     }
   }
 }
@@ -57,6 +59,7 @@ export function pinAllData(map: Map, table: CitationTable): void {
 export function addCirclePin(
   map: Map,
   coords: olCoord.Coordinate,
+  id: string,
 ): void {
   const pinFeature = new Feature({
     geometry: new Point(projection.fromLonLat(coords))
@@ -74,7 +77,7 @@ export function addCirclePin(
     }),
   });
   pinFeature.setStyle(pinStyle);
-
+  pinFeature.setId(id);
   const vectorSrc = new VectorSource({
     features: [pinFeature]
   });
@@ -83,5 +86,26 @@ export function addCirclePin(
     source: vectorSrc
   });
 
+  const selectHover = new Select({
+    condition: pointerMove,
+    layers: [vectorLayer]
+  });
+
   map.addLayer(vectorLayer);
+  map.addInteraction(selectHover);
+
+  selectHover.on("select", e => {
+    if (e.selected.length > 0) {
+      const selectedFeature = e.selected[0];
+      const selectedId = selectedFeature.getId();
+      const dataRow = document.getElementById(selectedId as string);
+      if (dataRow) dataRow.classList.toggle("map-hovered");
+    }
+    if (e.deselected.length > 0) {
+      const deselectedFeature = e.deselected[0];
+      const deselectedId = deselectedFeature.getId();
+      const dataRow = document.getElementById(deselectedId as string);
+      if (dataRow) dataRow.classList.remove("map-hovered");
+    }
+  });
 }

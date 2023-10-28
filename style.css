@@ -195,6 +195,10 @@ header {
     background-color: var(--my-cyan);
     color: var(--my-black);
 }
+.map-hovered {
+    background-color: var(--my-cyan) !important;
+    color: var(--my-black);
+}
 #data-pane tbody tr:nth-child(odd) {
     background-color: var(--my-light-gray);
 }
