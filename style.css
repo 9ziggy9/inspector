@@ -38,6 +38,13 @@
     display: none;
 }
 
+* {
+        user-select: none; /* This will disable text selection on the entire page */
+        -webkit-user-select: none; /* For Safari and Chrome */
+        -moz-user-select: none; /* For Firefox */
+        -ms-user-select: none; /* For IE10+/Edge */
+}
+
 ::selection {
     background-color: var(--my-black);
     color: var(--my-yellow);
@@ -275,4 +282,34 @@ header {
       transform: rotate(90deg) scale(1);
       border-radius: 50px;
     }
+}
+
+.col-hover:hover {
+    background-color: var(--my-yellow);
+    color: var(--my-black);
+    cursor: pointer;
+}
+
+#table-insp {
+    position:relative;
+}
+
+.table-drop-menu {
+    position: absolute;
+    background-color: var(--my-yellow);
+    z-index: 1;
+    min-width: 100%;
+    box-sizing: border-box;
+}
+
+.table-drop a {
+    color: var(--my-black);
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.table-drop a:hover {
+    background-color: var(--my-cyan);
+    transition: background-color 0.33s;
 }

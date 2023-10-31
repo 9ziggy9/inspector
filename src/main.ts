@@ -113,9 +113,6 @@ function onClickMenuBtn(): void {
   dropdown!.style.display = dropdown!.style.display === "none" ? "block" : "none";
 }
 
-const __artificialDelay = (ms: number): Promise<void> => new Promise((res) =>
-  setTimeout(() => res(), ms));
-
 function onClickLoginBtn(
   sheetData: ValueRange[],
   citationTable: CitationTable,
@@ -134,11 +131,11 @@ function onClickLoginBtn(
       sheetData, citationTable, _SHEET_ID, "A13:M"
     ); // unhardcode range
     citationTable = await geolocateData(citationTable);
-    // await __artificialDelay(2000); // remove me eventually
     console.log("POST GEOLOCATE: ", citationTable);
     pinAllData(map, citationTable);
     loadScrn!.style.display = "none";
     tableScrn!.style.display = "table";
+    attachTableHandlers();
   };
   TOKEN_CLIENT.requestAccessToken({
     "prompt": gapi.client.getToken() ? "consent" : ""
@@ -199,6 +196,28 @@ function attachToolbarHandlers(
   );
   menuBtn!.addEventListener("click",  onClickMenuBtn);
   helpBtn!.addEventListener("click",  onClickHelpBtn);
+}
+
+function onTableClickInsp(): void {
+  const dropdown = document.getElementById("table-drop-insp");
+  dropdown!.style.display = dropdown!.style.display === "none" ? "block" : "none";
+}
+
+function attachTableHandlers(): void {
+  const selectorInsp = document.getElementById("table-insp");
+  const selectorDate = document.getElementById("table-date");
+  const selectorAddr = document.getElementById("table-addr");
+  const selectorTime = document.getElementById("table-time");
+  const selectorDept = document.getElementById("table-dept");
+  const selectorSign = document.getElementById("table-sign");
+  const selectorCite = document.getElementById("table-cite");
+  selectorInsp!.addEventListener("click", onTableClickInsp);
+  selectorDate!.addEventListener("click", () => console.log("table hello"));
+  selectorAddr!.addEventListener("click", () => console.log("table hello"));
+  selectorTime!.addEventListener("click", () => console.log("table hello"));
+  selectorDept!.addEventListener("click", () => console.log("table hello"));
+  selectorSign!.addEventListener("click", () => console.log("table hello"));
+  selectorCite!.addEventListener("click", () => console.log("table hello"));
 }
 
 async function main() {
