@@ -113,6 +113,10 @@ function onClickLoginBtn(v: Viewer, map: Map): void {
 
     await v.init(_SHEET_ID, "A13:M"); // unhardcode range
 
+    v.setFilter({
+      names: ["drogers"],
+    } as Filter);
+
     populateDataTable(v.view());
     pinAllData(map, v.view());
 
@@ -174,12 +178,20 @@ function attachToolbarHandlers(v: Viewer, map: Map,): void {
   helpBtn!.addEventListener("click",  onClickHelpBtn);
 }
 
-function onTableClickInsp(inspNames: string[]): void {
+function onTableClickInsp(v: Viewer): void {
+  const selectedNames = v.listViewNames();
   const dropdown = document.getElementById("table-drop-insp") as HTMLElement;
   dropdown!.innerHTML = "";
-  inspNames.forEach(name => {
+  v.listMasterNames().forEach(name => {
     const nameEl = document.createElement("p") as HTMLElement;
     nameEl.innerHTML = name;
+    if (selectedNames.includes(name)) nameEl.classList.add("selected-insp");
+    nameEl.addEventListener("click", (e) => {
+      const target = e!.target as HTMLElement;
+      v.toggleFilter("names", target.innerHTML);
+      v.applyFilter();
+      populateDataTable(v.view());
+    });
     dropdown!.appendChild(nameEl);
   });
   dropdown!.style.display = dropdown!.style.display === "none" ? "block" : "none";
@@ -198,7 +210,7 @@ function attachTableHandlers(v: Viewer): void {
   const selectorDept = document.getElementById("table-dept");
   const selectorSign = document.getElementById("table-sign");
   const selectorCite = document.getElementById("table-cite");
-  selectorInsp!.addEventListener("click", () => onTableClickInsp(v.listNames()));
+  selectorInsp!.addEventListener("click", () => onTableClickInsp(v));
   selectorDate!.addEventListener("click", onTableClickDate);
   selectorAddr!.addEventListener("click", () => console.log("table hello"));
   selectorTime!.addEventListener("click", () => console.log("table hello"));

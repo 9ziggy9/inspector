@@ -34,10 +34,6 @@
     --my-yellow:     #ebcb8b; --my-modal:        #4c566a88;
 }
 
-::-webkit-scrollbar {
-    display: none;
-}
-
 * {
         user-select: none; /* This will disable text selection on the entire page */
         -webkit-user-select: none; /* For Safari and Chrome */
@@ -175,7 +171,7 @@ header {
     height: 100%;
     background-color: var(--my-blue);
 }
-#data-pane table {
+#data-pane > table {
     width: 100%;
     display: none; /* toggles to table */
     margin:0;
@@ -332,3 +328,5 @@ header {
 .date-drop-data p:hover, #table-drop-insp p:hover {
     background-color: var(--my-cyan);
 }
+
+.selected-insp {background-color: var(--my-cyan);}

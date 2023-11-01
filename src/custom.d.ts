@@ -46,16 +46,19 @@ declare type CitationTable = {
 };
 
 declare type Filter = {
-  names?: string[],
-  dates?: string[],
-  depts?: string[],
-  cites?: number,
+  [names: string]: string[];
+  [dates: string]: string[];
+  [depts: string]: string[];
+  [cites: string]: number;
 };
 
 declare type Viewer = {
   setFilter: (f: Filter) => void;
-  purge:     () => void;
-  view:      () => CitationTable;
-  init:      (id: string, rng: string) => Promise<void>;
-  listNames: () => string[];
+  applyFilter: () => void;
+  toggleFilter: (k: string, v: string) => void;
+  purge: () => void;
+  view: () => CitationTable;
+  init: (id: string, rng: string) => Promise<void>;
+  listMasterNames: () => string[];
+  listViewNames: () => string[];
 };
