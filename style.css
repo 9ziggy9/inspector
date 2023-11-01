@@ -288,15 +288,17 @@ header {
     background-color: var(--my-yellow);
     color: var(--my-black);
     cursor: pointer;
+    box-sizing: border-box;
 }
 
-#table-insp {
+#table-insp, #table-date {
     position:relative;
 }
 
 .table-drop-menu {
     position: absolute;
     background-color: var(--my-yellow);
+    border: 2px solid var(--my-white);
     z-index: 1;
     min-width: 100%;
     box-sizing: border-box;
@@ -312,4 +314,18 @@ header {
 .table-drop a:hover {
     background-color: var(--my-cyan);
     transition: background-color 0.33s;
+}
+
+.date-drop-data {
+    display: flex;
+    flex-direction: column;
+}
+
+.date-drop-data p {
+    margin: 0;
+    padding: 0;
+}
+
+.date-drop-data p:hover {
+    background-color: var(--my-cyan);
 }

@@ -1,5 +1,5 @@
-import {ROSEVILLE_COORD, geolocateData} from "./geo";
-import {getAllSheetData, normalizeSheetData} from "./sheets";
+import {ROSEVILLE_COORD} from "./geo";
+import {createViewer} from "./viewer";
 import {_API_KEY, _DISC_DOC, _SCOPES, _CLIENT_ID, _SHEET_ID} from "./secrets";
 import {newMap, addCirclePin, pinAllData} from "./map";
 import Map from "ol/Map";
@@ -63,19 +63,6 @@ function populateDataTable(citationTable: CitationTable): void {
   }
 }
 
-async function fetchAndPopulateData(
-  sheetData: ValueRange[],
-  citationTable: CitationTable,
-  id: string,
-  rng: string,
-): Promise<CitationTable> {
-  sheetData = await getAllSheetData(id, rng);
-  citationTable = await normalizeSheetData(sheetData);
-  console.log(citationTable);
-  populateDataTable(citationTable);
-  return citationTable;
-}
-
 // viewport functions
 function unmountDetailedView(): void {
   const detailedView = document.querySelector(".detailed-view");
@@ -113,11 +100,7 @@ function onClickMenuBtn(): void {
   dropdown!.style.display = dropdown!.style.display === "none" ? "block" : "none";
 }
 
-function onClickLoginBtn(
-  sheetData: ValueRange[],
-  citationTable: CitationTable,
-  map: Map,
-): void {
+function onClickLoginBtn(v: Viewer, map: Map): void {
   TOKEN_CLIENT.callback = async function(resp: GapiError) {
     if (resp.error !== undefined) throw resp;
     const loginBtn   = document.querySelector(".login-btn") as HTMLElement;
@@ -127,12 +110,11 @@ function onClickLoginBtn(
     loadScrn!.style.display = "flex";
     loginBtn!.style.display = "none";
     logoutBtn!.style.display = "block";
-    citationTable = await fetchAndPopulateData(
-      sheetData, citationTable, _SHEET_ID, "A13:M"
-    ); // unhardcode range
-    citationTable = await geolocateData(citationTable);
-    console.log("POST GEOLOCATE: ", citationTable);
-    pinAllData(map, citationTable);
+
+    await v.init(_SHEET_ID, "A13:M"); // unhardcode range
+    populateDataTable(v.view());
+    pinAllData(map, v.view());
+
     loadScrn!.style.display = "none";
     tableScrn!.style.display = "table";
     attachTableHandlers();
@@ -146,10 +128,7 @@ function onClickLoginBtn(
   }
 }
 
-function onClickLogoutBtn(
-  sheetData: ValueRange[],
-  citationTable: CitationTable,
-): void {
+function onClickLogoutBtn(v: Viewer): void {
   const token = gapi.client.getToken();
   if (token !== null) {
     google.accounts.oauth2.revoke(
@@ -162,8 +141,7 @@ function onClickLogoutBtn(
         logoutBtn!.style.display = "none";
       });
     // purge populated data
-    sheetData = [];
-    citationTable = {};
+    v.purge();
     document.getElementById("table-entry-point")!.innerHTML = "";
   }
 }
@@ -179,20 +157,16 @@ function onClickHelpBtn(): void {
 }
 
 // attach event handlers
-function attachToolbarHandlers(
-  sheetData: ValueRange[],
-  citationTable: CitationTable,
-  map: Map,
-): void {
+function attachToolbarHandlers(v: Viewer, map: Map,): void {
   const loginBtn  = document.querySelector(".login-btn");
   const logoutBtn = document.querySelector(".logout-btn");
   const menuBtn   = document.querySelector(".menu-btn");
   const helpBtn   = document.querySelector(".help-btn");
   loginBtn!.addEventListener(
-    "click", () => onClickLoginBtn(sheetData, citationTable, map)
+    "click", () => onClickLoginBtn(v, map)
   );
   logoutBtn!.addEventListener(
-    "click", () => onClickLogoutBtn(sheetData, citationTable)
+    "click", () => onClickLogoutBtn(v)
   );
   menuBtn!.addEventListener("click",  onClickMenuBtn);
   helpBtn!.addEventListener("click",  onClickHelpBtn);
@@ -200,6 +174,11 @@ function attachToolbarHandlers(
 
 function onTableClickInsp(): void {
   const dropdown = document.getElementById("table-drop-insp");
+  dropdown!.style.display = dropdown!.style.display === "none" ? "block" : "none";
+}
+
+function onTableClickDate(): void {
+  const dropdown = document.getElementById("table-drop-date");
   dropdown!.style.display = dropdown!.style.display === "none" ? "block" : "none";
 }
 
@@ -212,7 +191,7 @@ function attachTableHandlers(): void {
   const selectorSign = document.getElementById("table-sign");
   const selectorCite = document.getElementById("table-cite");
   selectorInsp!.addEventListener("click", onTableClickInsp);
-  selectorDate!.addEventListener("click", () => console.log("table hello"));
+  selectorDate!.addEventListener("click", onTableClickDate);
   selectorAddr!.addEventListener("click", () => console.log("table hello"));
   selectorTime!.addEventListener("click", () => console.log("table hello"));
   selectorDept!.addEventListener("click", () => console.log("table hello"));
@@ -221,9 +200,7 @@ function attachTableHandlers(): void {
 }
 
 async function main() {
-  // session state data
-  let SHEET_DATA: ValueRange[] = [];
-  let CITATION_TABLE: CitationTable = {};
+  let v: Viewer = createViewer();
 
   // Load and initialize gapi/gis
   const flags: initFlags = {
@@ -232,10 +209,10 @@ async function main() {
   };
 
   // Initialize OL Map
-  const MAP = newMap(ROSEVILLE_COORD);
+  const map = newMap(ROSEVILLE_COORD);
 
   // Handlers
-  attachToolbarHandlers(SHEET_DATA, CITATION_TABLE, MAP);
+  attachToolbarHandlers(v, map);
 }
 
 window.onload = main;

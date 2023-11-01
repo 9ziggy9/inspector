@@ -44,3 +44,17 @@ declare type CitationEntry = {
 declare type CitationTable = {
   [insp: string]: CitationEntry[];
 };
+
+declare type Filter = {
+  names?: string[],
+  dates?: string[],
+  depts?: string[],
+  cites?: number,
+};
+
+declare type Viewer = {
+  setFilter: () => void;
+  purge:     () => void;
+  view:      () => CitationTable;
+  init:      (id: string, rng: string) => Promise<void>;
+};
