@@ -113,17 +113,13 @@ function onClickLoginBtn(v: Viewer, map: Map): void {
 
     await v.init(_SHEET_ID, "A13:M"); // unhardcode range
 
-    // FILTER TEST WERKS
-    v.setFilter({
-      names: ["drogers", "noexist"]
-    } as Filter);
-   
     populateDataTable(v.view());
     pinAllData(map, v.view());
 
     loadScrn!.style.display = "none";
     tableScrn!.style.display = "table";
-    attachTableHandlers();
+
+    attachTableHandlers(v);
   };
   TOKEN_CLIENT.requestAccessToken({
     "prompt": gapi.client.getToken() ? "consent" : ""
@@ -178,8 +174,14 @@ function attachToolbarHandlers(v: Viewer, map: Map,): void {
   helpBtn!.addEventListener("click",  onClickHelpBtn);
 }
 
-function onTableClickInsp(): void {
-  const dropdown = document.getElementById("table-drop-insp");
+function onTableClickInsp(inspNames: string[]): void {
+  const dropdown = document.getElementById("table-drop-insp") as HTMLElement;
+  dropdown!.innerHTML = "";
+  inspNames.forEach(name => {
+    const nameEl = document.createElement("p") as HTMLElement;
+    nameEl.innerHTML = name;
+    dropdown!.appendChild(nameEl);
+  });
   dropdown!.style.display = dropdown!.style.display === "none" ? "block" : "none";
 }
 
@@ -188,7 +190,7 @@ function onTableClickDate(): void {
   dropdown!.style.display = dropdown!.style.display === "none" ? "block" : "none";
 }
 
-function attachTableHandlers(): void {
+function attachTableHandlers(v: Viewer): void {
   const selectorInsp = document.getElementById("table-insp");
   const selectorDate = document.getElementById("table-date");
   const selectorAddr = document.getElementById("table-addr");
@@ -196,7 +198,7 @@ function attachTableHandlers(): void {
   const selectorDept = document.getElementById("table-dept");
   const selectorSign = document.getElementById("table-sign");
   const selectorCite = document.getElementById("table-cite");
-  selectorInsp!.addEventListener("click", onTableClickInsp);
+  selectorInsp!.addEventListener("click", () => onTableClickInsp(v.listNames()));
   selectorDate!.addEventListener("click", onTableClickDate);
   selectorAddr!.addEventListener("click", () => console.log("table hello"));
   selectorTime!.addEventListener("click", () => console.log("table hello"));

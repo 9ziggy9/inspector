@@ -13,19 +13,20 @@ export function createViewer(): Viewer {
         Object.entries(__master).filter(([k]) => names.includes(k))
       );
     } else {
-      __view = __master
+      __view = __master;
     }
   }
 
   return {
-    purge: () => { __raw = []; __master = {}, __view = {}; },
-    setFilter: (f: Filter) => applyFilter(f),
-    view: () => __view,
     init: async (id: string, rng: string): Promise<void> => {
       __raw    = await getAllSheetData(id, rng);
       __master = await normalizeSheetData(__raw);
       __master = await geolocateData(__master);
       __view   = __master;
     },
+    purge: () => { __raw = []; __master = {}; __view = {}; },
+    setFilter: (f: Filter) => applyFilter(f),
+    view: () => __view,
+    listNames: () => Object.keys(__master),
   };
 }

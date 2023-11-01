@@ -57,4 +57,5 @@ declare type Viewer = {
   purge:     () => void;
   view:      () => CitationTable;
   init:      (id: string, rng: string) => Promise<void>;
+  listNames: () => string[];
 };

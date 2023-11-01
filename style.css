@@ -321,11 +321,14 @@ header {
     flex-direction: column;
 }
 
-.date-drop-data p {
+.date-drop-data p, #table-drop-insp p {
     margin: 0;
     padding: 0;
+    padding-left: 0.5rem;
+    color: var(--my-black);
+    text-align: left;
 }
 
-.date-drop-data p:hover {
+.date-drop-data p:hover, #table-drop-insp p:hover {
     background-color: var(--my-cyan);
 }
