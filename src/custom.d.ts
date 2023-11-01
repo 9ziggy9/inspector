@@ -53,7 +53,7 @@ declare type Filter = {
 };
 
 declare type Viewer = {
-  setFilter: () => void;
+  setFilter: (f: Filter) => void;
   purge:     () => void;
   view:      () => CitationTable;
   init:      (id: string, rng: string) => Promise<void>;

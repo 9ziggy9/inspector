@@ -112,6 +112,12 @@ function onClickLoginBtn(v: Viewer, map: Map): void {
     logoutBtn!.style.display = "block";
 
     await v.init(_SHEET_ID, "A13:M"); // unhardcode range
+
+    // FILTER TEST WERKS
+    v.setFilter({
+      names: ["drogers", "noexist"]
+    } as Filter);
+   
     populateDataTable(v.view());
     pinAllData(map, v.view());
 
@@ -200,13 +206,14 @@ function attachTableHandlers(): void {
 }
 
 async function main() {
-  let v: Viewer = createViewer();
-
   // Load and initialize gapi/gis
   const flags: initFlags = {
     gapi: await loadGapiClient(),
     gis:  await loadGisClient()
   };
+
+  // Application state
+  let v: Viewer = createViewer();
 
   // Initialize OL Map
   const map = newMap(ROSEVILLE_COORD);
