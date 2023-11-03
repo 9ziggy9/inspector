@@ -28,5 +28,7 @@
 - [ ] Make data table scrollable/sortable
 - [ ] Implement views of data table
 - [x] Determine mechanism of keeping track of citation number
+- [ ] Add supervisor assignment sheets
+- [ ] Implementing hashing of assignments and status updates
 - [ ] Implement statistical modal/interface for data.
 - [ ] Bundle some charting library for data visualization.
