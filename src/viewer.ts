@@ -1,11 +1,69 @@
 import {getAllSheetData, normalizeSheetData} from "./sheets";
 import {geolocateData} from "./geo";
 
+/*
+  
+  createViewer() takes the current view of our application and diffs it with a user
+  provided filter. Suppose the master view looks like:
+
+  {
+    "insp-a": [
+      {"id": "insp-a-0", date: "10/13/2021", addr: "", ...}
+      {"id": "insp-a-1", date: "11/14/2021", addr: "", ...}
+      {"id": "insp-a-2", date: "12/15/2021", addr: "", ...}
+    ],
+    "insp-b": [
+      {"id": "insp-b-0", date: "10/13/2021", addr: "", ...}
+      {"id": "insp-b-1", date: "11/14/2021", addr: "", ...}
+      {"id": "insp-b-2", date: "12/15/2021", addr: "", ...}
+    ],
+  }
+
+  We seek to apply a filter such as:
+
+  {
+    "names": ["insp-a"],
+    "months": ["October", "September"]
+  }
+
+  The amended view should look like:
+
+  {
+    "insp-a": [
+      {"id": "insp-a-0", date: "10/13/2021", addr: "", ...}
+      {"id": "insp-a-1", date: "11/14/2021", addr: "", ...}
+    ],
+  }
+
+  The current general filter object should have the following schema:
+
+  {
+    "names": [],
+    "months": [],
+    "citations": [],
+    "departments": [],
+  }
+
+ */
+
 export function createViewer(): Viewer {
   let __raw: ValueRange[]     = [];
   let __master: CitationTable = {};
   let __view: CitationTable   = __master;
   let __filter: Filter        = {};
+
+  const __batch = (...fns: ((v: CitationTable) => CitationTable)[]): CitationTable => fns
+    .reduce((view, f) => f(view), __master);
+
+  const __filterNames = (v: CitationTable): CitationTable => __filter["names"]
+    ? Object.fromEntries(
+      Object.entries(v).filter(([k]) => __filter["names"].includes(k)))
+    : v;
+
+  // const __filterMonths = (v: CitationTable): CitationTable => __filter["months"]
+  //   ? Object.fromEntries(
+  //     Object.entries(v).filter(([_, ...rows]) => rows.)
+  //   )
 
   return {
     init: async (id: string, rng: string): Promise<void> => {
@@ -18,16 +76,9 @@ export function createViewer(): Viewer {
     // directly set internal filter object --> please only use to initialize
     setFilter: (f: Filter) => __filter = f,
     // updates view to reflect current filter
-    applyFilter:  () => {
-      const {names} = __filter;
-      if (names) {
-        __view = Object.fromEntries(
-          Object.entries(__master).filter(([k]) => names.includes(k))
-        );
-      } else {
-        __view == __master;
-      };
-    },
+    applyFilter:  () => __view = __batch(
+      __filterNames,
+    ),
     // to be bound to clicking functions, merely adds/removes depending
     // on state
     toggleFilter: (k: string, v: string) => {
