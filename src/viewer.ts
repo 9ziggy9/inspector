@@ -20,7 +20,7 @@ export function createViewer(): Viewer {
     // updates view to reflect current filter
     applyFilter:  () => {
       const {names} = __filter;
-      if (names && names.length > 0) {
+      if (names) {
         __view = Object.fromEntries(
           Object.entries(__master).filter(([k]) => names.includes(k))
         );

@@ -54,6 +54,11 @@ function genTableTr(insp: string, row: CitationEntry): HTMLElement {
   return tr;
 }
 
+function purgeDataTable(): void {
+  const tableEntryPoint = document.getElementById("table-entry-point");
+  tableEntryPoint!.innerHTML = "";
+}
+
 function populateDataTable(citationTable: CitationTable): void {
   const tableEntryPoint = document.getElementById("table-entry-point");
   for (const insp of Object.keys(citationTable)) {
@@ -114,8 +119,10 @@ function onClickLoginBtn(v: Viewer, map: Map): void {
     await v.init(_SHEET_ID, "A13:M"); // unhardcode range
 
     v.setFilter({
-      names: ["drogers"],
+      names: ["drogers", "arogers"],
     } as Filter);
+
+    v.applyFilter();
 
     populateDataTable(v.view());
     pinAllData(map, v.view());
@@ -190,6 +197,8 @@ function onTableClickInsp(v: Viewer): void {
       const target = e!.target as HTMLElement;
       v.toggleFilter("names", target.innerHTML);
       v.applyFilter();
+      console.log(v.view());
+      purgeDataTable();
       populateDataTable(v.view());
     });
     dropdown!.appendChild(nameEl);
