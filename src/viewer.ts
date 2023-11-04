@@ -75,7 +75,7 @@ export function createViewer(): Viewer {
     purge: () => { __raw = []; __master = {}; __view = {}; },
     // directly set internal filter object --> please only use to initialize
     setFilter: (f: Filter) => __filter = f,
-    // updates view to reflect current filter
+    // updates view to reflect current filter object by batching pure functions
     applyFilter:  () => __view = __batch(
       __filterNames,
     ),
@@ -87,7 +87,7 @@ export function createViewer(): Viewer {
         : [...__filter[k], v];
     },
     view: () => __view,
-    listViewNames: () => Object.keys(__view),
+    listViewByField: (field: string) => __filter[field],
     listMasterNames: () => Object.keys(__master),
   };
 }

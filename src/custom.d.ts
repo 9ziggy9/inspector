@@ -60,5 +60,5 @@ declare type Viewer = {
   view: () => CitationTable;
   init: (id: string, rng: string) => Promise<void>;
   listMasterNames: () => string[];
-  listViewNames: () => string[];
+  listViewByField: (f: string) => string[];
 };
