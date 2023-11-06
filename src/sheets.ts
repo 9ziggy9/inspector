@@ -16,7 +16,7 @@ async function getSheetData(id: string, rng: string): Promise<ValueRange> {
       range: rng,
     });
     if (!response.result.values || response.result.values.length === 0) {
-      throw new Error("No data found in the sheet.");
+      return {...response.result, "values": []};
     } else {
       return response.result;
     }
