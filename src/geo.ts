@@ -9,28 +9,41 @@ const T_CACHE_MISS_COOLDOWN = 1300;
 const urlNominatimSearch = (addr: string): string =>
   `https://nominatim.openstreetmap.org/search?format=json&q=${addr}`;
 
-async function checkGeoCache(addr: string): Promise<[Coord, Coord] | null> {
+
+function checkGeoCache(addr: string): Promise<[Coord, Coord] | null> {
   const cachedLotLan = localStorage.getItem(addr);
   return cachedLotLan
     ? JSON.parse(cachedLotLan)
     : null;
 }
 
-const backOff = (ms: number): Promise<void> => new Promise((res) =>
+function logToLoadScreen(msg: string): void {
+  const liveLog = document.getElementById("live-log") as HTMLElement;
+  liveLog.innerText = `(${msg})`;
+}
+
+const backOffAndLog = (msg: string, ms: number): Promise<void> => new Promise((res) =>
   setTimeout(() => {
-    console.log(`Cache miss: backing off nominatim API for ${ms} ms.`)
+    logToLoadScreen(msg);
     res();
   }, ms));
+
+const cacheMissLog = (ms: number): Promise<void> => new Promise(async (res) => {
+  await backOffAndLog("Fetching new geo data .",   ms/3);
+  await backOffAndLog("Fetching new geo data ..",  ms/3);
+  await backOffAndLog("Fetching new geo data ...", ms/3);
+  res();
+});
 
 // Consider changing to a structured query which accepts a UrlSearchParms obj.
 async function geocodeAddr(addr: string): Promise<[Coord, Coord] | null> {
   const cachedData = await checkGeoCache(addr);
   if (cachedData) {
-    console.log(`Cached data found: ${addr}`);
+    await backOffAndLog(`Cached data found: ${addr}`, 50);
     return cachedData;
   }
 
-  await backOff(T_CACHE_MISS_COOLDOWN);
+  await cacheMissLog(T_CACHE_MISS_COOLDOWN);
 
   const res = await fetch(urlNominatimSearch(addr+",Roseville,CA"));
   const data = await res.json();

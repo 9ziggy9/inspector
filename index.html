@@ -41,13 +41,16 @@
       <div class="overlay"></div>
     </div>
     <div id="data-pane">
+
       <div id="table-load-pane">
         <div id="loading-line">
           <span id="loading-text">Loading...</span>
           <div class="table-load-icon"></div>
         </div>
-        <p>(caching geo data... please be patient)</p>
+        <p id="live-log">(caching geo data... please be patient)</p>
       </div>
+
+      <div class="scrollable-table">
       <table>
         <thead>
           <tr>
@@ -56,18 +59,9 @@
             </th>
             <th id="table-date" class="col-hover">Date
               <div class="table-drop-menu" id="table-drop-date" style="display: none;">
-                  <p>January</p>
-                  <p>February</p>
-                  <p>March</p>
-                  <p>April</p>
-                  <p>May</p>
-                  <p>June</p>
-                  <p>July</p>
-                  <p>August</p>
-                  <p>September</p>
-                  <p>October</p>
-                  <p>November</p>
-                  <p>December</p>
+                  <p>January</p> <p>February</p> <p>March</p> <p>April</p>
+                  <p>May</p> <p>June</p> <p>July</p> <p>August</p>
+                  <p>September</p> <p>October</p> <p>November</p> <p>December</p>
                 </div>
             </th>
             <th id="table-addr" class="col-hover">Address</th>
@@ -79,6 +73,8 @@
         </thead>
         <tbody id="table-entry-point"></tbody>
       </table>
+      </div>
+
     </div>
     <script async defer src="https://apis.google.com/js/api.js"></script>
     <script async defer src="https://accounts.google.com/gsi/client"></script>

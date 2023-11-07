@@ -168,25 +168,39 @@ header {
     margin: 0;
     padding: 0;
     width: 100%;
-    height: 100%;
     background-color: var(--my-blue);
+    display: block;
+    height: 100%;
 }
-#data-pane table {
+.scrollable-table {
+    background-color: pink;
+    max-height: 200px;
+    overflow: hidden;
+}
+table {
     width: 100%;
+    border-collapse: collapse;
     display: none; /* toggles to table */
-    margin:0;
-    padding:0;
+    max-height: 100px;
 }
-#data-pane thead {width: 100%;}
-#data-pane thead tr {
+thead {
+    display: block;
+    table-layout: fixed;
+    width: 100%;
+}
+tr {
     /* border: 2px solid var(--my-light-gray); */
     display: grid;
     grid-template-columns: 1fr 1fr 3fr 1fr 1fr 1fr 1fr;
     width: 100%;
     background-color: var(--my-orange);
 }
-#data-pane tbody {width: 100%;}
-#data-pane tbody tr {
+tbody {
+    overflow-y: scroll;
+    width: 100%;
+    height: 100px;
+}
+tbody tr {
     /* border: 2px solid var(--my-light-gray); */
     display: grid;
     grid-template-columns: 1fr 1fr 3fr 1fr 1fr 1fr 1fr;
@@ -194,7 +208,7 @@ header {
     background-color: var(--my-dark-gray);
     cursor: pointer;
 }
-#data-pane tbody tr:hover {
+tbody tr:hover {
     background-color: var(--my-cyan);
     color: var(--my-black);
 }
@@ -202,14 +216,14 @@ header {
     background-color: var(--my-cyan) !important;
     color: var(--my-black);
 }
-#data-pane tbody tr:nth-child(odd) {
+tbody tr:nth-child(odd) {
     background-color: var(--my-light-gray);
 }
-#data-pane tbody tr:nth-child(odd):hover {
+tbody tr:nth-child(odd):hover {
     background-color: var(--my-cyan);
     color: var(--my-black);
 }
-#data-pane tbody tr td {
+tbody tr td {
     display: flex;
     justify-content: center;
     align-items: center;
