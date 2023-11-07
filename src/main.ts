@@ -3,6 +3,7 @@ import {createViewer} from "./viewer";
 import {_API_KEY, _DISC_DOC, _SCOPES, _CLIENT_ID, _SHEET_ID} from "./secrets";
 import {newMap, addCirclePin, pinAllData} from "./map";
 import Map from "ol/Map";
+import {MONTHS} from "./globals";
 
 let TOKEN_CLIENT: TokenClient;
 
@@ -120,7 +121,7 @@ function onClickLoginBtn(v: Viewer, map: Map): void {
 
     v.setFilter({
       names: ["drogers", "arogers"],
-      months: ["September", "November"],
+      months: ["September", "October", "November"],
     } as Filter);
 
     v.applyFilter();
@@ -198,7 +199,6 @@ function onTableClickInsp(v: Viewer): void {
       const target = e!.target as HTMLElement;
       v.toggleFilter("names", target.innerHTML);
       v.applyFilter();
-      console.log(v.view());
       purgeDataTable();
       populateDataTable(v.view());
     });
@@ -208,21 +208,20 @@ function onTableClickInsp(v: Viewer): void {
 }
 
 function onTableClickDate(v: Viewer): void {
-  const monthList = [ // please remember to do something else for this.
-    "January", "February", "March", "April",
-    "May", "June", "July", "August", "September",
-    "October", "November", "December",
-  ];
   const selectedMonths = v.listViewByField("months");
   const dropdown = document.getElementById("table-drop-date");
   dropdown!.innerHTML = "";
-  monthList.forEach(month => {
+  MONTHS.forEach(month => {
     const monthEl = document.createElement("p") as HTMLElement;
     monthEl.innerHTML = month;
     if (selectedMonths.includes(month)) monthEl.classList.add("selected-insp");
     monthEl.addEventListener("click", (e) => {
       const target = e!.target as HTMLElement;
-      console.log(target.innerHTML);
+      v.toggleFilter("months", target.innerHTML);
+      v.applyFilter();
+      v.log();
+      purgeDataTable();
+      populateDataTable(v.view());
     });
     dropdown!.appendChild(monthEl);
   });

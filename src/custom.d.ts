@@ -56,6 +56,7 @@ declare type Viewer = {
   setFilter: (f: Filter) => void;
   applyFilter: () => void;
   toggleFilter: (k: string, v: string) => void;
+  log: (v?: string) => void;
   purge: () => void;
   view: () => CitationTable;
   init: (id: string, rng: string) => Promise<void>;

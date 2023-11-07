@@ -1,5 +1,6 @@
 import {getAllSheetData, normalizeSheetData} from "./sheets";
 import {geolocateData} from "./geo";
+import {MONTHS} from "./globals";
 
 /*
   
@@ -55,15 +56,29 @@ export function createViewer(): Viewer {
   const __batch = (...fns: ((v: CitationTable) => CitationTable)[]): CitationTable => fns
     .reduce((view, f) => f(view), __master);
 
+  const __toggleFilter = (k: string, v: string) => __filter[k].includes(v)
+    ? __filter[k].filter(s => s !== v)
+    : [...__filter[k], v];
+
   const __filterNames = (v: CitationTable): CitationTable => __filter["names"]
     ? Object.fromEntries(
       Object.entries(v).filter(([k]) => __filter["names"].includes(k)))
     : v;
 
-  // const __filterMonths = (v: CitationTable): CitationTable => __filter["months"]
-  //   ? Object.fromEntries(
-  //     Object.entries(v).filter(([_, ...rows]) => rows.)
-  //   )
+  const __toMonthString = (date: string): string => MONTHS[
+    Number(date.split("/")[0]) - 1
+  ]
+
+  const __filterMonths = (v: CitationTable): CitationTable => __filter["months"]
+    ? Object.fromEntries(
+      Object.entries(v)
+        .map(([name, entries]) => [
+          name,
+          entries.filter(({date}) => __filter["months"]
+            .includes(__toMonthString(date)))
+        ])
+    )
+    : v;
 
   return {
     init: async (id: string, rng: string): Promise<void> => {
@@ -72,20 +87,29 @@ export function createViewer(): Viewer {
       __master = await geolocateData(__master);
       __view   = __master;
     },
+    log: function(v?: string): void {
+      switch(v) {
+        case "raw":    {console.log("RAW:\n", __raw); break;}
+        case "master": {console.log("MASTER:\n", __master); break;}
+        case "filter": {console.log("FILTER:\n", __filter); break;}
+        case "view":   {console.log("VIEW:\n", __view); break;}
+        default:        console.log("TOTAL:\n", {
+          raw: __raw, master: __master, filter: __filter, view: __view
+        });
+        
+      }
+    },
     purge: () => { __raw = []; __master = {}; __view = {}; },
     // directly set internal filter object --> please only use to initialize
     setFilter: (f: Filter) => __filter = f,
     // updates view to reflect current filter object by batching pure functions
     applyFilter:  () => __view = __batch(
       __filterNames,
+      __filterMonths,
     ),
     // to be bound to clicking functions, merely adds/removes depending
     // on state
-    toggleFilter: (k: string, v: string) => {
-      __filter[k] = __filter[k].includes(v)
-        ? __filter[k].filter(s => s !== v)
-        : [...__filter[k], v];
-    },
+    toggleFilter: (k: string, v: string) => __filter[k] = __toggleFilter(k, v),
     view: () => __view,
     listViewByField: (field: string) => __filter[field],
     listMasterNames: () => Object.keys(__master),
