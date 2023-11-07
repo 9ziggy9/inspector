@@ -230,6 +230,7 @@ header {
 #table-load-pane > p {
     margin-top: 0;
 }
+
 #loading-line {
     display: flex;
     flex-direction: row;
@@ -287,6 +288,13 @@ header {
     box-sizing: border-box;
 }
 
+.col-selected {
+    background-color: var(--my-yellow);
+    color: var(--my-black);
+    box-sizing: border-box;
+}
+
+
 #table-insp, #table-date {
     position:relative;
 }
@@ -312,12 +320,7 @@ header {
     transition: background-color 0.33s;
 }
 
-.date-drop-data {
-    display: flex;
-    flex-direction: column;
-}
-
-.date-drop-data p, #table-drop-insp p {
+#table-drop-insp p, #table-drop-date p {
     margin: 0;
     padding: 0;
     padding-left: 0.5rem;
@@ -325,7 +328,7 @@ header {
     text-align: left;
 }
 
-.date-drop-data p:hover, #table-drop-insp p:hover {
+#table-drop-insp p:hover, #table-drop-date p:hover {
     background-color: var(--my-cyan);
 }
 

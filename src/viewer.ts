@@ -67,7 +67,7 @@ export function createViewer(): Viewer {
 
   const __toMonthString = (date: string): string => MONTHS[
     Number(date.split("/")[0]) - 1
-  ]
+  ];
 
   const __filterMonths = (v: CitationTable): CitationTable => __filter["months"]
     ? Object.fromEntries(
@@ -89,11 +89,11 @@ export function createViewer(): Viewer {
     },
     log: function(v?: string): void {
       switch(v) {
-        case "raw":    {console.log("RAW:\n", __raw); break;}
-        case "master": {console.log("MASTER:\n", __master); break;}
-        case "filter": {console.log("FILTER:\n", __filter); break;}
-        case "view":   {console.log("VIEW:\n", __view); break;}
-        default:        console.log("TOTAL:\n", {
+        case "raw":    console.log("RAW:\n", __raw); break;
+        case "master": console.log("MASTER:\n", __master); break;
+        case "filter": console.log("FILTER:\n", __filter); break;
+        case "view":   console.log("VIEW:\n", __view); break;
+        default:       console.log("TOTAL:\n", {
           raw: __raw, master: __master, filter: __filter, view: __view
         });
         

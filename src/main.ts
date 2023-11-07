@@ -189,6 +189,8 @@ function attachToolbarHandlers(v: Viewer, map: Map,): void {
 
 function onTableClickInsp(v: Viewer): void {
   const selectedNames = v.listViewByField("names");
+  const columnEl = document.getElementById("table-insp");
+  columnEl!.classList.toggle("col-selected");
   const dropdown = document.getElementById("table-drop-insp") as HTMLElement;
   dropdown!.innerHTML = "";
   v.listMasterNames().forEach(name => {
@@ -197,6 +199,12 @@ function onTableClickInsp(v: Viewer): void {
     if (selectedNames.includes(name)) nameEl.classList.add("selected-insp");
     nameEl.addEventListener("click", (e) => {
       const target = e!.target as HTMLElement;
+
+      // Toggle selection and stop upward propagation
+      // This allows the menu to stay open until closed
+      target.classList.toggle("selected-insp");
+      e.stopPropagation();
+
       v.toggleFilter("names", target.innerHTML);
       v.applyFilter();
       purgeDataTable();
@@ -209,6 +217,8 @@ function onTableClickInsp(v: Viewer): void {
 
 function onTableClickDate(v: Viewer): void {
   const selectedMonths = v.listViewByField("months");
+  const columnEl = document.getElementById("table-date");
+  columnEl!.classList.toggle("col-selected");
   const dropdown = document.getElementById("table-drop-date");
   dropdown!.innerHTML = "";
   MONTHS.forEach(month => {
@@ -217,6 +227,12 @@ function onTableClickDate(v: Viewer): void {
     if (selectedMonths.includes(month)) monthEl.classList.add("selected-insp");
     monthEl.addEventListener("click", (e) => {
       const target = e!.target as HTMLElement;
+
+      // Toggle selection and stop upward propagation
+      // This allows the menu to stay open until closed
+      target.classList.toggle("selected-insp");
+      e.stopPropagation();
+
       v.toggleFilter("months", target.innerHTML);
       v.applyFilter();
       v.log();
