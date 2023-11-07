@@ -301,15 +301,15 @@ header {
 
 .table-drop-menu {
     position: absolute;
-    background-color: var(--my-yellow);
-    border: 2px solid var(--my-white);
+    background-color: var(--my-blue);
+    /* border: 1px solid var(--my-white); */
     z-index: 1;
     min-width: 100%;
     box-sizing: border-box;
 }
 
 .table-drop a {
-    color: var(--my-black);
+    color: var(--my-white);
     padding: 12px 16px;
     text-decoration: none;
     display: block;
@@ -324,7 +324,7 @@ header {
     margin: 0;
     padding: 0;
     padding-left: 0.5rem;
-    color: var(--my-black);
+    color: var(--my-white);
     text-align: left;
 }
 
@@ -332,4 +332,4 @@ header {
     background-color: var(--my-cyan);
 }
 
-.selected-insp {background-color: var(--my-cyan);}
+.selected-insp {background-color: var(--my-green);}
