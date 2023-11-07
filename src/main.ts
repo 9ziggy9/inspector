@@ -1,7 +1,7 @@
 import {ROSEVILLE_COORD} from "./geo";
 import {createViewer} from "./viewer";
 import {_API_KEY, _DISC_DOC, _SCOPES, _CLIENT_ID, _SHEET_ID} from "./secrets";
-import {newMap, addCirclePin, pinAllData} from "./map";
+import {newMap, addCirclePin, pinAllData, unpinAllData} from "./map";
 import Map from "ol/Map";
 import {MONTHS} from "./globals";
 
@@ -69,6 +69,15 @@ function populateDataTable(citationTable: CitationTable): void {
   }
 }
 
+function renderFromView(v: Viewer, m?: Map): void {
+  purgeDataTable();
+  populateDataTable(v.view());
+  if (m) {
+    unpinAllData(m);
+    pinAllData(m, v.view());
+  }
+}
+
 // viewport functions
 function unmountDetailedView(): void {
   const detailedView = document.querySelector(".detailed-view");
@@ -132,7 +141,7 @@ function onClickLoginBtn(v: Viewer, map: Map): void {
     loadScrn!.style.display = "none";
     tableScrn!.style.display = "table";
 
-    attachTableHandlers(v);
+    attachTableHandlers(v, map);
   };
   TOKEN_CLIENT.requestAccessToken({
     "prompt": gapi.client.getToken() ? "consent" : ""
@@ -187,7 +196,7 @@ function attachToolbarHandlers(v: Viewer, map: Map,): void {
   helpBtn!.addEventListener("click",  onClickHelpBtn);
 }
 
-function onTableClickInsp(v: Viewer): void {
+function onTableClickInsp(v: Viewer, m: Map): void {
   const selectedNames = v.listViewByField("names");
   const columnEl = document.getElementById("table-insp");
   columnEl!.classList.toggle("col-selected");
@@ -207,15 +216,15 @@ function onTableClickInsp(v: Viewer): void {
 
       v.toggleFilter("names", target.innerHTML);
       v.applyFilter();
-      purgeDataTable();
-      populateDataTable(v.view());
+
+      renderFromView(v, m);
     });
     dropdown!.appendChild(nameEl);
   });
   dropdown!.style.display = dropdown!.style.display === "none" ? "block" : "none";
 }
 
-function onTableClickDate(v: Viewer): void {
+function onTableClickDate(v: Viewer, m: Map): void {
   const selectedMonths = v.listViewByField("months");
   const columnEl = document.getElementById("table-date");
   columnEl!.classList.toggle("col-selected");
@@ -235,16 +244,15 @@ function onTableClickDate(v: Viewer): void {
 
       v.toggleFilter("months", target.innerHTML);
       v.applyFilter();
-      v.log();
-      purgeDataTable();
-      populateDataTable(v.view());
+
+      renderFromView(v, m);
     });
     dropdown!.appendChild(monthEl);
   });
   dropdown!.style.display = dropdown!.style.display === "none" ? "block" : "none";
 }
 
-function attachTableHandlers(v: Viewer): void {
+function attachTableHandlers(v: Viewer, m: Map): void {
   const selectorInsp = document.getElementById("table-insp");
   const selectorDate = document.getElementById("table-date");
   const selectorAddr = document.getElementById("table-addr");
@@ -252,8 +260,8 @@ function attachTableHandlers(v: Viewer): void {
   const selectorDept = document.getElementById("table-dept");
   const selectorSign = document.getElementById("table-sign");
   const selectorCite = document.getElementById("table-cite");
-  selectorInsp!.addEventListener("click", () => onTableClickInsp(v));
-  selectorDate!.addEventListener("click", () => onTableClickDate(v));
+  selectorInsp!.addEventListener("click", () => onTableClickInsp(v, m));
+  selectorDate!.addEventListener("click", () => onTableClickDate(v, m));
   selectorAddr!.addEventListener("click", () => console.log("table hello"));
   selectorTime!.addEventListener("click", () => console.log("table hello"));
   selectorDept!.addEventListener("click", () => console.log("table hello"));

@@ -5,25 +5,23 @@ import TileLayer from "ol/layer/Tile";
 import OSM from "ol/source/OSM";
 import * as mapControls from "ol/control";
 import * as projection from "ol/proj";
+import BaseLayer from "ol/layer/Base";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import Point from "ol/geom/Point";
 import Feature from "ol/Feature";
+import Geometry from "ol/geom/Geometry";
 import {Icon, Style, Fill, Stroke, Circle} from "ol/style";
 import {Select} from "ol/interaction";
 import {pointerMove, click} from "ol/events/condition";
 import * as olCoord from "ol/coordinate";
 // END OpenLayer
 
-const RADIUS_PIN = 6;
-const PinColors = [
+const PIN_RADIUS = 6;
+const PIN_COLOR_SEVERITY = [
   "green",
-  "purple",
-  "red",
-  "orange",
   "yellow",
-  "blue",
-  "cyan",
+  "red",
 ];
 
 export const newMap = (centerCoord: olCoord.Coordinate): Map => new Map({
@@ -43,29 +41,42 @@ export const newMap = (centerCoord: olCoord.Coordinate): Map => new Map({
 export function pinAllData(map: Map, table: CitationTable): void {
   console.log("Following table available:", table);
   Object.keys(table).forEach((insp, i) => {
-    for (const {id, latlon} of table[insp]) {
-      if (latlon) addCirclePin(map, latlon, id, PinColors[i % PinColors.length]);
+    for (const {id, latlon, cite} of table[insp]) {
+      if (latlon) addCirclePin(map, latlon, id, +cite);
     }
   });
+}
+
+// WARNING:
+// I'm highly suspect of this function, consider generalizing object and
+// holding references to vector source and layers instead.
+export function unpinAllData(map: Map): void {
+  map.getLayers().getArray()
+    .forEach((l: BaseLayer) => {
+      if (l instanceof VectorLayer) {
+        const source: VectorSource = l.getSource();
+        source.clear();
+      }
+    });
 }
 
 export function addCirclePin(
   map: Map,
   coords: olCoord.Coordinate,
   id: string,
-  pinColor: string,
+  citeNumber: number,
 ): void {
   const pinFeature = new Feature({
     geometry: new Point(projection.fromLonLat(coords))
   });
   const pinStyle = new Style({
     image: new Circle({
-      radius: RADIUS_PIN,
+      radius: PIN_RADIUS,
       fill: new Fill({
-        color: pinColor, // reimplement with color coded by inspector
+        color: PIN_COLOR_SEVERITY[citeNumber - 1], // reimplement with color coded by inspector
       }),
       stroke: new Stroke({
-        color: "black",
+        color: "grey",
         width: 2,
       })
     }),
