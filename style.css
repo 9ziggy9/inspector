@@ -60,6 +60,7 @@ body,html {
 
 header {
     width: 100%;
+    height: 4vh;
     font-size: 1.25rem;
     font-family:  "EB Garamond", serif;
     background-color: var(--my-blue);
@@ -88,11 +89,10 @@ header {
     cursor: pointer;
     background-color: var(--my-red);
     color: var(--my-white);
-    margin-right: 0.25rem;
     display: none;
 }
 
-.login-btn, logout-btn { margin-right: 0; }
+.login-btn, logout-btn { margin-right: 0.25rem; }
 
 .logout-btn:hover, .menu-btn:hover, .login-btn:hover, .help-btn:hover {
     background-color: var(--my-orange);
@@ -133,7 +133,7 @@ header {
 #master-view {
     position: relative;
     width: 100%;
-    height: 350px;
+    height: 35vh;
 }
 #map {width:100%; height:100%;}
 .overlay {
@@ -170,23 +170,44 @@ header {
     width: 100%;
     background-color: var(--my-blue);
     display: block;
-    height: 100%;
+    height: 58vh;
 }
+footer {
+    z-index: 10;
+    font-family:  "EB Garamond", serif;
+    height: 3vh;
+    background-color: var(--my-black);
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin: 0; !important
+    padding: 0; !important
+}
+footer a {
+    margin-right: 0.25rem;
+    color: var(--my-white);
+    font-size:1rem;
+    text-decoration: none;
+    display: block;
+}
+
 .scrollable-table {
-    background-color: pink;
-    max-height: 200px;
-    overflow: hidden;
+    width: 100%;
 }
-table {
+.scrollable-table table {
     width: 100%;
     border-collapse: collapse;
     display: none; /* toggles to table */
-    max-height: 100px;
 }
 thead {
     display: block;
     table-layout: fixed;
     width: 100%;
+}
+th {
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 tr {
     /* border: 2px solid var(--my-light-gray); */
@@ -195,25 +216,29 @@ tr {
     width: 100%;
     background-color: var(--my-orange);
 }
-tbody {
-    overflow-y: scroll;
+
+.scrollable-body {
     width: 100%;
-    height: 100px;
+    height: 54.5vh;
+    overflow: auto;
 }
+.scrollable-body table {
+    /* display: block; */
+    height: 100%;
+    width: 100%;
+}
+
+tbody {width: 100%;}
 tbody tr {
     /* border: 2px solid var(--my-light-gray); */
     display: grid;
     grid-template-columns: 1fr 1fr 3fr 1fr 1fr 1fr 1fr;
     width: 100%;
-    background-color: var(--my-dark-gray);
+    background-color: var(--my-dark-gray); !important
     cursor: pointer;
 }
 tbody tr:hover {
     background-color: var(--my-cyan);
-    color: var(--my-black);
-}
-.map-hovered {
-    background-color: var(--my-cyan) !important;
     color: var(--my-black);
 }
 tbody tr:nth-child(odd) {
@@ -227,7 +252,16 @@ tbody tr td {
     display: flex;
     justify-content: center;
     align-items: center;
+    width: 100%;
 }
+
+
+.map-hovered {
+    background-color: var(--my-cyan) !important;
+    color: var(--my-black);
+}
+
+
 #table-load-pane {
     position: relative;
     width: 100%;
@@ -317,7 +351,7 @@ tbody tr td {
     position: absolute;
     background-color: var(--my-blue);
     /* border: 1px solid var(--my-white); */
-    z-index: 1;
+    z-index: 10;
     min-width: 100%;
     box-sizing: border-box;
 }
