@@ -35,6 +35,16 @@ async function loadGisClient(): Promise<boolean> {
   })
 }
 
+function initModal(): void {
+  const modalBG = document.getElementById("modal-background");
+  const modal = document.getElementById("modal");
+  modal!.addEventListener("click", e => e.stopPropagation());
+  modalBG!.addEventListener("click", e => {
+    e.stopPropagation();
+    modalBG!.style.display = "none";
+  })
+}
+
 function genTableTd(data: string): HTMLElement {
   const td = document.createElement("td");
   td.innerText = data;
@@ -171,17 +181,15 @@ function onClickLogoutBtn(v: Viewer): void {
 }
 
 function onClickHelpBtn(): void {
-  console.log("Hit help!");
-  const token = gapi.client.getToken();
-  if (!token) {
-    console.log("Not currently logged in.");
-  } else {
-    console.log("Yes, logged in.");
-  }
+  console.log("Hit help button.");
+  const modal = document.getElementById("modal-background");
+  console.log(modal!.style);
+  modal!.style.display = modal!.style.display === "none" ? "flex" : "none";
 }
 
 // attach event handlers
 function attachToolbarHandlers(v: Viewer, map: Map,): void {
+  initModal(); // Allow closing by clicking BG area.
   const loginBtn  = document.querySelector(".login-btn");
   const logoutBtn = document.querySelector(".logout-btn");
   const menuBtn   = document.querySelector(".menu-btn");
