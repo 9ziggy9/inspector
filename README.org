@@ -27,7 +27,7 @@
 - [X] Indicate when no cache is available so users don't pull their hair out.
 - [X] Implement views of data table
 - [X] Determine mechanism of keeping track of citation number
-- [ ] Make data table scrollable/sortable
+- [X] Make data table scrollable/sortable
 - [ ] Better optimize row highlight from map--consider binding dom node references!
 - [ ] Add supervisor assignment sheets
 - [ ] Implementing hashing of assignments and status updates
