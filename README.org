@@ -28,8 +28,11 @@
 - [X] Implement views of data table
 - [X] Determine mechanism of keeping track of citation number
 - [X] Make data table scrollable/sortable
+- [X] Local caching sucks, implementing Docker containerization of simple rust REST api
+- [ ] Find hosting service
+- [ ] Sqlite bindings
 - [ ] Better optimize row highlight from map--consider binding dom node references!
 - [ ] Add supervisor assignment sheets
 - [ ] Implementing hashing of assignments and status updates
 - [ ] Implement statistical modal/interface for data.
-- [ ] Bundle some charting library for data visualization.
+- [ ] Bundle some charting library for data visualization
