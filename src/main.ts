@@ -277,11 +277,11 @@ function attachTableHandlers(v: Viewer, m: Map): void {
   selectorCite!.addEventListener("click", () => console.log("table hello"));
 }
 
-async function main() {
-  console.log("Hello, electron!");
-}
+// async function main() {
+//   console.log("Hello, electron!");
+// }
 
-async function _main() {
+async function main() {
   // Load and initialize gapi/gis
   const flags: initFlags = {
     gapi: await loadGapiClient(),
