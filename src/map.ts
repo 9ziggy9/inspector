@@ -19,6 +19,7 @@ import * as olCoord from "ol/coordinate";
 
 const PIN_RADIUS = 6;
 const PIN_COLOR_SEVERITY = [
+  "grey",
   "green",
   "yellow",
   "red",
@@ -42,7 +43,12 @@ export function pinAllData(map: Map, table: CitationTable): void {
   console.log("Following table available:", table);
   Object.keys(table).forEach((insp, i) => {
     for (const {id, latlon, cite} of table[insp]) {
-      if (latlon) addCirclePin(map, latlon, id, +cite);
+      if (latlon) addCirclePin(
+        map,
+        latlon,
+        id,
+        Number.isInteger(+cite) ? +cite : 0, // handling for empty fields
+      );
     }
   });
 }
