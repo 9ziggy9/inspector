@@ -278,6 +278,10 @@ function attachTableHandlers(v: Viewer, m: Map): void {
 }
 
 async function main() {
+  console.log("Hello, electron!");
+}
+
+async function _main() {
   // Load and initialize gapi/gis
   const flags: initFlags = {
     gapi: await loadGapiClient(),

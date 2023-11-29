@@ -13,13 +13,20 @@ module.exports = {
         rules: [
             {
                 test: /\.ts$/,
-                use: "ts-loader",
+                loader: "ts-loader",
+                options: {
+                    configFile: path.resolve(__dirname, "./tsconfig.json"),
+                },
                 exclude: /node_modules/
             }
         ]
     },
     resolve: {
         extensions: [".ts", ".js"],
+        fallback: {
+            "fs": false,
+            "path": require.resolve("path-browserify")
+        }
     },
     plugins: [
         new HtmlWebpackPlugin({

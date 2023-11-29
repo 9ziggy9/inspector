@@ -5,89 +5,90 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Inspector Dashboard</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="icon" type="image/png" sizes="16x16" href="./favicon.png">
-    <link rel="stylesheet" href="./style.css">
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=EB+Garamond&display=swap"
-      rel="stylesheet"> 
-    <link
-      href="https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed&display=swap"
-      rel="stylesheet">
-    <link
-      href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@500&display=swap"
-      rel="stylesheet">
+    <!-- <link rel="preconnect" href="https://fonts.googleapis.com"> -->
+    <!-- <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> -->
+    <!-- <link rel="icon" type="image/png" sizes="16x16" href="./favicon.png"> -->
+    <!-- <link rel="stylesheet" href="./style.css"> -->
+    <!-- <link rel="stylesheet" -->
+    <!--       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" /> -->
+    <!-- <link -->
+    <!--   href="https://fonts.googleapis.com/css2?family=EB+Garamond&display=swap" -->
+    <!--   rel="stylesheet">  -->
+    <!-- <link -->
+    <!--   href="https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed&display=swap" -->
+    <!--   rel="stylesheet"> -->
+    <!-- <link -->
+    <!--   href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@500&display=swap" -->
+    <!--   rel="stylesheet"> -->
   </head>
-  <header>
-    <div class="menu-btn">menu</div>
-    <div class="spacer">
-      <h1 class="title">Inspector Dashboard</h1>
-    </div>
-    <div class="help-btn">help</div>
-    <div class="login-btn">login</div>
-    <div class="logout-btn">logout</div>
-  </header>
+  <!-- <header> -->
+  <!--   <div class="menu-btn">menu</div> -->
+  <!--   <div class="spacer"> -->
+  <!--     <h1 class="title">Inspector Dashboard</h1> -->
+  <!--   </div> -->
+  <!--   <div class="help-btn">help</div> -->
+  <!--   <div class="login-btn">login</div> -->
+  <!--   <div class="logout-btn">logout</div> -->
+  <!-- </header> -->
   <body>
-    <div id="modal-background" style="display: none;">
-      <div id="modal">
-        HELLO MODAL!
-      </div>
-    </div>
-    <div class="dropdown-menu" id="dropdown" style="display: none;">
-        <a href="#">Item 1</a>
-        <a href="#">Item 2</a>
-        <a href="#">Item 3</a>
-    </div>
-    <div id="master-view">
-      <div id="map"></div>
-      <div class="overlay"></div>
-    </div>
+    <h1>Hello, Electron!</h1>
+    <!-- <div id="modal-background" style="display: none;"> -->
+    <!--   <div id="modal"> -->
+    <!--     HELLO MODAL! -->
+    <!--   </div> -->
+    <!-- </div> -->
+    <!-- <div class="dropdown-menu" id="dropdown" style="display: none;"> -->
+    <!--     <a href="#">Item 1</a> -->
+    <!--     <a href="#">Item 2</a> -->
+    <!--     <a href="#">Item 3</a> -->
+    <!-- </div> -->
+    <!-- <div id="master-view"> -->
+    <!--   <div id="map"></div> -->
+    <!--   <div class="overlay"></div> -->
+    <!-- </div> -->
 
-    <div id="data-pane">
+    <!-- <div id="data-pane"> -->
 
-      <div id="table-load-pane">
-        <div id="loading-line">
-          <span id="loading-text">Loading...</span>
-          <div class="table-load-icon"></div>
-        </div>
-        <p id="live-log">(caching geo data... please be patient)</p>
-      </div>
+    <!--   <div id="table-load-pane"> -->
+    <!--     <div id="loading-line"> -->
+    <!--       <span id="loading-text">Loading...</span> -->
+    <!--       <div class="table-load-icon"></div> -->
+    <!--     </div> -->
+    <!--     <p id="live-log">(caching geo data... please be patient)</p> -->
+    <!--   </div> -->
 
-      <div class="scrollable-table">
-        <table>
-          <thead>
-            <tr>
-              <th id="table-insp" class="col-hover">Inspector
-                <div class="table-drop-menu" id="table-drop-insp" style="display: none;"></div>
-              </th>
-              <th id="table-date" class="col-hover">Date
-                <div class="table-drop-menu" id="table-drop-date" style="display: none;">
-                    <p>January</p> <p>February</p> <p>March</p> <p>April</p>
-                    <p>May</p> <p>June</p> <p>July</p> <p>August</p>
-                    <p>September</p> <p>October</p> <p>November</p> <p>December</p>
-                  </div>
-              </th>
-              <th id="table-addr" class="col-hover">Address</th>
-              <th id="table-time" class="col-hover">Time</th>
-              <th id="table-dept" class="col-hover">Department</th>
-              <th id="table-sign" class="col-hover">Signs</th>
-              <th id="table-cite" class="col-hover">Citations</th>
-            </tr>
-          </thead>
-        </table>
-      </div>
-      <div class="scrollable-body">
-        <table>
-          <tbody id="table-entry-point"></tbody>
-        </table>
-      </div>
-    </div>
+    <!--   <div class="scrollable-table"> -->
+    <!--     <table> -->
+    <!--       <thead> -->
+    <!--         <tr> -->
+    <!--           <th id="table-insp" class="col-hover">Inspector -->
+    <!--             <div class="table-drop-menu" id="table-drop-insp" style="display: none;"></div> -->
+    <!--           </th> -->
+    <!--           <th id="table-date" class="col-hover">Date -->
+    <!--             <div class="table-drop-menu" id="table-drop-date" style="display: none;"> -->
+    <!--                 <p>January</p> <p>February</p> <p>March</p> <p>April</p> -->
+    <!--                 <p>May</p> <p>June</p> <p>July</p> <p>August</p> -->
+    <!--                 <p>September</p> <p>October</p> <p>November</p> <p>December</p> -->
+    <!--               </div> -->
+    <!--           </th> -->
+    <!--           <th id="table-addr" class="col-hover">Address</th> -->
+    <!--           <th id="table-time" class="col-hover">Time</th> -->
+    <!--           <th id="table-dept" class="col-hover">Department</th> -->
+    <!--           <th id="table-sign" class="col-hover">Signs</th> -->
+    <!--           <th id="table-cite" class="col-hover">Citations</th> -->
+    <!--         </tr> -->
+    <!--       </thead> -->
+    <!--     </table> -->
+    <!--   </div> -->
+    <!--   <div class="scrollable-body"> -->
+    <!--     <table> -->
+    <!--       <tbody id="table-entry-point"></tbody> -->
+    <!--     </table> -->
+    <!--   </div> -->
+    <!-- </div> -->
   </body>
-  <footer><a href="https://github.com/9ziggy9/inspector">source code</a></footer>
-  <script async defer src="https://apis.google.com/js/api.js"></script>
-  <script async defer src="https://accounts.google.com/gsi/client"></script>
+  <!-- <footer><a href="https://github.com/9ziggy9/inspector">source code</a></footer> -->
+  <!-- <script async defer src="https://apis.google.com/js/api.js"></script> -->
+  <!-- <script async defer src="https://accounts.google.com/gsi/client"></script> -->
   <script async defer src="./bundle.js"></script>
 </html>
