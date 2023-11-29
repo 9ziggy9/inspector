@@ -19,9 +19,9 @@ import * as olCoord from "ol/coordinate";
 
 const PIN_RADIUS = 6;
 const PIN_COLOR_SEVERITY = [
-  "grey",
   "green",
   "yellow",
+  "orange",
   "red",
 ];
 
@@ -79,7 +79,7 @@ export function addCirclePin(
     image: new Circle({
       radius: PIN_RADIUS,
       fill: new Fill({
-        color: PIN_COLOR_SEVERITY[citeNumber - 1], // reimplement with color coded by inspector
+        color: PIN_COLOR_SEVERITY[citeNumber], // reimplement with color coded by inspector
       }),
       stroke: new Stroke({
         color: "grey",

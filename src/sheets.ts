@@ -1,3 +1,5 @@
+import {SanityCheck, Sanitizer} from "./sanitizer";
+
 async function getAllSheetNames(id: string): Promise<string[]> {
   try {
     const response = await gapi.client.sheets.spreadsheets.get({spreadsheetId: id});
@@ -42,13 +44,14 @@ export async function normalizeSheetData(sheetData: ValueRange[]): Promise<Citat
     [sliceNameFromRange(range)]: values!
       .map((vs, vId) => ({
         "id":   `${sliceNameFromRange(range)}-${vId}`,
-        "date": vs[0],   // date
-        "addr": vs[1],   // address
-        "time": vs[6],   // time
-        "dept": vs[7],   // dept
-        "sign": vs[9],   // signs
-        "cite": vs[11],  // citation num
-        "cmnt": vs[12],  // comment
-      })),
+        "date": vs[0],                  // date
+        "addr": vs[1],                  // address
+        "time": vs[6],                  // time
+        "dept": vs[7],                  // dept
+        "sign": Sanitizer.int(vs[9]),   // signs
+        "cite": Sanitizer.int(vs[11]),  // citation num
+        "cmnt": vs[12],                 // comment
+      }))
+      .filter(({addr}) => SanityCheck.addr(addr)),
   }), {});
 }

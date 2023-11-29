@@ -1,4 +1,5 @@
 import * as olCoord from "ol/coordinate";
+import {Sanitizer} from "./sanitizer";
 
 type Coord = olCoord.Coordinate;
 
@@ -35,8 +36,10 @@ const cacheMissLog = (ms: number): Promise<void> => new Promise(async (res) => {
   res();
 });
 
-// Consider changing to a structured query which accepts a UrlSearchParms obj.
-async function geocodeAddr(addr: string): Promise<[Coord, Coord] | null> {
+async function geocodeAddr(addr: string | null): Promise<[Coord, Coord] | null> {
+  // Guard bad sheet data.
+  if (!addr) return null;
+
   const cachedData = await checkGeoCache(addr);
   if (cachedData) {
     await backOffAndLog(`Cached data found: ${addr}`, 50);
@@ -52,11 +55,14 @@ async function geocodeAddr(addr: string): Promise<[Coord, Coord] | null> {
     localStorage.setItem(addr, JSON.stringify([lon, lat]));
     return [lon, lat];
   }
+
+  console.log(`Unreachable addr: "${addr}", mapping to Null Island.`);
+  localStorage.setItem(addr, JSON.stringify([0,0])); // map to Null Island
   return null;
 }
 
 async function appendLatLonField(entry: CitationEntry): Promise<CitationEntry> {
-  const latlon = await geocodeAddr(entry["addr"]);
+  const latlon = await geocodeAddr(Sanitizer.addr(entry["addr"]));
   if (!latlon) return entry;
   return {
     ...entry,
