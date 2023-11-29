@@ -1,5 +1,7 @@
 node_modules/
 dist/
+native/
 .env
 probe/
 src/secrets.ts
+native-src/secrets.ts

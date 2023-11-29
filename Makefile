@@ -1,5 +1,7 @@
 BUILD_CMD=npx webpack --config webpack.config.js
 BUILD_DIR=./dist
+NATIVE_DIR=./native
+NATIVE_BUILD=npx webpack --config webpack.config.native.js
 
 -include .env
 
@@ -10,6 +12,11 @@ all:
 	@-make --no-print-directory deploy
 	@-make --no-print-directory clean
 	@-make --no-print-directory git_clean
+
+native: clean
+	@echo "Building Electron native application."
+	@echo "Building bundle."
+	$(NATIVE_BUILD)
 
 local: build
 
@@ -43,3 +50,4 @@ git_clean:
 
 clean:
 	rm -rf $(BUILD_DIR)
+	rm -rf $(NATIVE_DIR)
