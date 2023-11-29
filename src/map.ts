@@ -39,11 +39,14 @@ export const newMap = (centerCoord: olCoord.Coordinate): Map => new Map({
   }),
 });
 
+const notNullIsland = (xs: [olCoord.Coordinate, olCoord.Coordinate]): boolean =>
+  Number(xs[0]) !== 0 && Number(xs[1]) !== 0;
+
 export function pinAllData(map: Map, table: CitationTable): void {
   console.log("Following table available:", table);
   Object.keys(table).forEach((insp, i) => {
     for (const {id, latlon, cite} of table[insp]) {
-      if (latlon) addCirclePin(
+      if (latlon && notNullIsland(latlon)) addCirclePin(
         map,
         latlon,
         id,
