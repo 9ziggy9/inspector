@@ -176,7 +176,7 @@ function onClickLogoutBtn(v: Viewer): void {
       });
     // purge populated data
     v.purge();
-    document.getElementById("table-entry-point")!.innerHTML = "";
+    location.reload(); // hard page refresh;
   }
 }
 
