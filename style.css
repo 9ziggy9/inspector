@@ -69,8 +69,9 @@ body,html {
 }
 
 #modal {
+    height: 100%;
+    width: 100%;
     color: var(--my-black);
-    background-color: yellow;
     z-index: 51;
 }
 
@@ -397,3 +398,8 @@ tbody tr td {
 }
 
 .selected-insp {background-color: var(--my-green);}
+
+#modal-sheet {
+    height: 100%;
+    width: 100%;
+}
