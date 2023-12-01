@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    <!-- WARNING: May wish to remove this! This is done to have faster deployment update times by not caching. -->
+    <!-- WARNING:
+         May wish to remove this! This is done to have faster deployment
+         update times by not caching.
+      -->
     <meta http-equiv='cache-control' content='no-cache'> 
     <meta http-equiv='expires' content='0'> 
     <meta http-equiv='pragma' content='no-cache'>
@@ -27,6 +30,7 @@
       href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@500&display=swap"
       rel="stylesheet">
   </head>
+
   <header>
     <div class="menu-btn">statistics</div>
     <div class="spacer">
@@ -36,34 +40,36 @@
     <div class="login-btn">login</div>
     <div class="logout-btn">logout</div>
   </header>
+
   <body>
     <div id="modal-background" style="display: none;">
       <div id="modal">
       </div>
     </div>
+
     <div class="dropdown-menu" id="dropdown" style="display: none;">
         <a href="#">Item 1</a>
         <a href="#">Item 2</a>
         <a href="#">Item 3</a>
     </div>
+
     <div id="master-view">
       <div id="map"></div>
       <div class="overlay"></div>
     </div>
 
     <div id="data-pane">
-
-      <!-- TEMPLATIZE ME -->
-      <div id="table-load-pane">
+      <div id="table-load-pane"> <!-- TODO: TEMPLATE -->
         <div id="loading-line">
           <span id="loading-text">Loading...</span>
           <div class="table-load-icon"></div>
         </div>
         <p id="live-log">(caching geo data... please be patient)</p>
       </div>
-
     </div>
+
   </body>
+
   <footer><a href="https://github.com/9ziggy9/inspector">source code</a></footer>
   <script async defer src="https://apis.google.com/js/api.js"></script>
   <script async defer src="https://accounts.google.com/gsi/client"></script>
