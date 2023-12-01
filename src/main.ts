@@ -1,6 +1,6 @@
 import {ROSEVILLE_COORD} from "./geo";
 import {createViewer} from "./viewer";
-import {_API_KEY, _DISC_DOC, _SCOPES, _CLIENT_ID, _SHEET_ID} from "./secrets";
+import {_API_KEY, _DISC_DOC, _SCOPES, _CLIENT_ID, _SHEET_ID, _SHEET_URL} from "./secrets";
 import {newMap, addCirclePin, pinAllData, unpinAllData} from "./map";
 import Map from "ol/Map";
 import {MONTHS} from "./globals";
@@ -130,13 +130,15 @@ function onClickLoginBtn(v: Viewer, map: Map): void {
     if (resp.error !== undefined) throw resp;
     const loginBtn   = document.querySelector(".login-btn") as HTMLElement;
     const logoutBtn  = document.querySelector(".logout-btn") as HTMLElement;
+    const editBtn    = document.querySelector(".edit-btn") as HTMLElement;
     const loadScrn   = document.getElementById("table-load-pane") as HTMLElement;
     const tableScrn  = document.querySelector("#data-pane table") as HTMLElement;
-    loadScrn!.style.display = "flex";
-    loginBtn!.style.display = "none";
+    loadScrn!.style.display  = "flex";
+    loginBtn!.style.display  = "none";
     logoutBtn!.style.display = "block";
+    editBtn!.style.display   = "block";
 
-    await v.init(_SHEET_ID, "A13:M"); // unhardcode range
+    await v.init(_SHEET_ID, "A4:M"); // unhardcode range
 
     v.setFilter({
       names: ["drogers", "arogers"],
@@ -180,11 +182,16 @@ function onClickLogoutBtn(v: Viewer): void {
   }
 }
 
-function onClickHelpBtn(): void {
-  console.log("Hit help button.");
+function onClickEditButton(): void {
   const modal = document.getElementById("modal-background");
-  console.log(modal!.style);
+  modal!.innerHTML = "";
   modal!.style.display = modal!.style.display === "none" ? "flex" : "none";
+  if (modal!.style.display === "flex") {
+    const embeddedSheet = document.createElement("iframe");
+    embeddedSheet!.id  = "modal-sheet";
+    embeddedSheet!.src = _SHEET_URL;
+    modal!.appendChild(embeddedSheet);
+  }
 }
 
 // attach event handlers
@@ -193,7 +200,7 @@ function attachToolbarHandlers(v: Viewer, map: Map,): void {
   const loginBtn  = document.querySelector(".login-btn");
   const logoutBtn = document.querySelector(".logout-btn");
   const menuBtn   = document.querySelector(".menu-btn");
-  const helpBtn   = document.querySelector(".help-btn");
+  const helpBtn   = document.querySelector(".edit-btn");
   loginBtn!.addEventListener(
     "click", () => onClickLoginBtn(v, map)
   );
@@ -201,7 +208,7 @@ function attachToolbarHandlers(v: Viewer, map: Map,): void {
     "click", () => onClickLogoutBtn(v)
   );
   menuBtn!.addEventListener("click",  onClickMenuBtn);
-  helpBtn!.addEventListener("click",  onClickHelpBtn);
+  helpBtn!.addEventListener("click",  onClickEditButton);
 }
 
 function onTableClickInsp(v: Viewer, m: Map): void {

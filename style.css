@@ -89,7 +89,7 @@ header {
     border:2px solid var(--my-blue);
 }
 
-.menu-btn, .login-btn, .help-btn {
+.menu-btn, .login-btn, .edit-btn {
     padding: 0.25rem 0.25rem 0.25rem 0.25rem;
     border: none;
     border-radius: 4px;
@@ -98,6 +98,8 @@ header {
     color: var(--my-white);
     margin-right: 0.25rem;
 }
+
+.edit-btn {display: none;}
 
 .logout-btn {
     padding: 0.25rem 0.25rem 0.25rem 0.25rem;
@@ -111,7 +113,7 @@ header {
 
 .login-btn, logout-btn { margin-right: 0.25rem; }
 
-.logout-btn:hover, .menu-btn:hover, .login-btn:hover, .help-btn:hover {
+.logout-btn:hover, .menu-btn:hover, .login-btn:hover, .edit-btn:hover {
     background-color: var(--my-orange);
     transition: background-color 0.33s;
 }

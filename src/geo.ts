@@ -64,7 +64,7 @@ async function geocodeAddr(addr: string | null): Promise<[Coord, Coord] | null> 
     localStorage.setItem(addr, JSON.stringify(coords));
     return coords;
   }
-  console.log(`Unreachable addr: "${addr}", mapping to Null Island.`);
+  // console.log(`Unreachable addr: "${addr}", mapping to Null Island.`);
   localStorage.setItem(addr, JSON.stringify([0, 0])); // map to Null Island
   return null;
 }
