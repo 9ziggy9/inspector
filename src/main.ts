@@ -1,7 +1,7 @@
 import {ROSEVILLE_COORD} from "./geo";
 import {createViewer} from "./viewer";
 import {_API_KEY, _DISC_DOC, _SCOPES, _CLIENT_ID, _SHEET_ID, _SHEET_URL} from "./secrets";
-import {newMap, addCirclePin, pinAllData, unpinAllData} from "./map";
+import {createPinMap} from "./map";
 import Map from "ol/Map";
 import {MONTHS} from "./globals";
 
@@ -79,12 +79,12 @@ function populateDataTable(citationTable: CitationTable): void {
   }
 }
 
-function renderFromView(v: Viewer, m?: Map): void {
+function renderFromView(v: Viewer, p?: PinMap): void {
   purgeDataTable();
   populateDataTable(v.view());
-  if (m) {
-    unpinAllData(m);
-    pinAllData(m, v.view());
+  if (p) {
+    p.unpinAll();
+    p.addAll(v.view());
   }
 }
 
@@ -125,7 +125,7 @@ function onClickMenuBtn(): void {
   dropdown!.style.display = dropdown!.style.display === "none" ? "block" : "none";
 }
 
-function onClickLoginBtn(v: Viewer, map: Map): void {
+function onClickLoginBtn(v: Viewer, p: PinMap): void {
   TOKEN_CLIENT.callback = async function(resp: GapiError) {
     if (resp.error !== undefined) throw resp;
     const loginBtn   = document.querySelector(".login-btn") as HTMLElement;
@@ -148,12 +148,12 @@ function onClickLoginBtn(v: Viewer, map: Map): void {
     v.applyFilter();
 
     populateDataTable(v.view());
-    pinAllData(map, v.view());
+    p.addAll(v.view());
 
     loadScrn!.style.display = "none";
     tableScrn!.style.display = "table";
 
-    attachTableHandlers(v, map);
+    attachTableHandlers(v, p);
   };
   TOKEN_CLIENT.requestAccessToken({
     "prompt": gapi.client.getToken() ? "consent" : ""
@@ -195,14 +195,14 @@ function onClickEditButton(): void {
 }
 
 // attach event handlers
-function attachToolbarHandlers(v: Viewer, map: Map,): void {
+function attachToolbarHandlers(v: Viewer, p: PinMap): void {
   initModal(); // Allow closing by clicking BG area.
   const loginBtn  = document.querySelector(".login-btn");
   const logoutBtn = document.querySelector(".logout-btn");
   const menuBtn   = document.querySelector(".menu-btn");
   const helpBtn   = document.querySelector(".edit-btn");
   loginBtn!.addEventListener(
-    "click", () => onClickLoginBtn(v, map)
+    "click", () => onClickLoginBtn(v, p)
   );
   logoutBtn!.addEventListener(
     "click", () => onClickLogoutBtn(v)
@@ -211,7 +211,7 @@ function attachToolbarHandlers(v: Viewer, map: Map,): void {
   helpBtn!.addEventListener("click",  onClickEditButton);
 }
 
-function onTableClickInsp(v: Viewer, m: Map): void {
+function onTableClickInsp(v: Viewer, p: PinMap): void {
   const selectedNames = v.listViewByField("names");
   const columnEl = document.getElementById("table-insp");
   columnEl!.classList.toggle("col-selected");
@@ -232,14 +232,14 @@ function onTableClickInsp(v: Viewer, m: Map): void {
       v.toggleFilter("names", target.innerHTML);
       v.applyFilter();
 
-      renderFromView(v, m);
+      renderFromView(v, p);
     });
     dropdown!.appendChild(nameEl);
   });
   dropdown!.style.display = dropdown!.style.display === "none" ? "block" : "none";
 }
 
-function onTableClickDate(v: Viewer, m: Map): void {
+function onTableClickDate(v: Viewer, p: PinMap): void {
   const selectedMonths = v.listViewByField("months");
   const columnEl = document.getElementById("table-date");
   columnEl!.classList.toggle("col-selected");
@@ -260,14 +260,14 @@ function onTableClickDate(v: Viewer, m: Map): void {
       v.toggleFilter("months", target.innerHTML);
       v.applyFilter();
 
-      renderFromView(v, m);
+      renderFromView(v, p);
     });
     dropdown!.appendChild(monthEl);
   });
   dropdown!.style.display = dropdown!.style.display === "none" ? "block" : "none";
 }
 
-function attachTableHandlers(v: Viewer, m: Map): void {
+function attachTableHandlers(v: Viewer, p: PinMap): void {
   const selectorInsp = document.getElementById("table-insp");
   const selectorDate = document.getElementById("table-date");
   const selectorAddr = document.getElementById("table-addr");
@@ -275,9 +275,9 @@ function attachTableHandlers(v: Viewer, m: Map): void {
   const selectorDept = document.getElementById("table-dept");
   const selectorSign = document.getElementById("table-sign");
   const selectorCite = document.getElementById("table-cite");
-  selectorInsp!.addEventListener("click", () => onTableClickInsp(v, m));
-  selectorDate!.addEventListener("click", () => onTableClickDate(v, m));
-  selectorAddr!.addEventListener("click", () => console.log("table hello"));
+  selectorInsp!.addEventListener("click", () => onTableClickInsp(v, p));
+  selectorDate!.addEventListener("click", () => onTableClickDate(v, p));
+  selectorAddr!.addEventListener("click", () => p.log(v.view()));
   selectorTime!.addEventListener("click", () => console.log("table hello"));
   selectorDept!.addEventListener("click", () => console.log("table hello"));
   selectorSign!.addEventListener("click", () => console.log("table hello"));
@@ -295,10 +295,12 @@ async function main() {
   let v: Viewer = createViewer();
 
   // Initialize OL Map
-  const map = newMap(ROSEVILLE_COORD);
+  const p: PinMap = createPinMap(
+    ROSEVILLE_COORD, 6, ["green", "yellow", "orange", "red"],
+  );
 
   // Handlers
-  attachToolbarHandlers(v, map);
+  attachToolbarHandlers(v, p);
 }
 
 window.onload = main;

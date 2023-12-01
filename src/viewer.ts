@@ -2,51 +2,6 @@ import {getAllSheetData, normalizeSheetData} from "./sheets";
 import {geolocateData} from "./geo";
 import {MONTHS} from "./globals";
 
-/*
-  
-  createViewer() takes the current view of our application and diffs it with a user
-  provided filter. Suppose the master view looks like:
-
-  {
-    "insp-a": [
-      {"id": "insp-a-0", date: "10/13/2021", addr: "", ...}
-      {"id": "insp-a-1", date: "11/14/2021", addr: "", ...}
-      {"id": "insp-a-2", date: "12/15/2021", addr: "", ...}
-    ],
-    "insp-b": [
-      {"id": "insp-b-0", date: "10/13/2021", addr: "", ...}
-      {"id": "insp-b-1", date: "11/14/2021", addr: "", ...}
-      {"id": "insp-b-2", date: "12/15/2021", addr: "", ...}
-    ],
-  }
-
-  We seek to apply a filter such as:
-
-  {
-    "names": ["insp-a"],
-    "months": ["October", "September"]
-  }
-
-  The amended view should look like:
-
-  {
-    "insp-a": [
-      {"id": "insp-a-0", date: "10/13/2021", addr: "", ...}
-      {"id": "insp-a-1", date: "11/14/2021", addr: "", ...}
-    ],
-  }
-
-  The current general filter object should have the following schema:
-
-  {
-    "names": [],
-    "months": [],
-    "citations": [],
-    "departments": [],
-  }
-
- */
-
 export function createViewer(): Viewer {
   let __raw: ValueRange[]     = [];
   let __master: CitationTable = {};
@@ -115,3 +70,48 @@ export function createViewer(): Viewer {
     listMasterNames: () => Object.keys(__master),
   };
 }
+
+/*
+  
+  createViewer() takes the current view of our application and diffs it with a user
+  provided filter. Suppose the master view looks like:
+
+  {
+    "insp-a": [
+      {"id": "insp-a-0", date: "10/13/2021", addr: "", ...}
+      {"id": "insp-a-1", date: "11/14/2021", addr: "", ...}
+      {"id": "insp-a-2", date: "12/15/2021", addr: "", ...}
+    ],
+    "insp-b": [
+      {"id": "insp-b-0", date: "10/13/2021", addr: "", ...}
+      {"id": "insp-b-1", date: "11/14/2021", addr: "", ...}
+      {"id": "insp-b-2", date: "12/15/2021", addr: "", ...}
+    ],
+  }
+
+  We seek to apply a filter such as:
+
+  {
+    "names": ["insp-a"],
+    "months": ["October", "September"]
+  }
+
+  The amended view should look like:
+
+  {
+    "insp-a": [
+      {"id": "insp-a-0", date: "10/13/2021", addr: "", ...}
+      {"id": "insp-a-1", date: "11/14/2021", addr: "", ...}
+    ],
+  }
+
+  The current general filter object should have the following schema:
+
+  {
+    "names": [],
+    "months": [],
+    "citations": [],
+    "departments": [],
+  }
+
+ */

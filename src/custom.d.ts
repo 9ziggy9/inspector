@@ -63,3 +63,10 @@ declare type Viewer = {
   listMasterNames: () => string[];
   listViewByField: (f: string) => string[];
 };
+
+declare type PinMap = {
+  map: Map;
+  addAll: (t: CitationTable) => void;
+  unpinAll: () => void;
+  log: (t?: CitationTable) => void;
+};
