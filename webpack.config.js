@@ -14,7 +14,11 @@ module.exports = {
             {
                 test: /\.ts$/,
                 use: "ts-loader",
-                exclude: /node_modules/
+                exclude: /node_modules/,
+            },
+            {
+                test: /\.html$/,
+                loader: "html-loader",
             }
         ]
     },
@@ -23,12 +27,12 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            inject: false,
             template: "./index.html",
         }),
         new CopyWebpackPlugin({
             patterns: [
                 { from: "style.css", to: "style.css"},
+                { from: "./views/stats.html", to: "stats.html"},
             ]
         })
     ]

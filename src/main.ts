@@ -1,9 +1,15 @@
 import {ROSEVILLE_COORD} from "./geo";
 import {createViewer} from "./viewer";
-import {_API_KEY, _DISC_DOC, _SCOPES, _CLIENT_ID, _SHEET_ID, _SHEET_URL} from "./secrets";
+import {_API_KEY, _DISC_DOC, _SCOPES,
+        _CLIENT_ID, _SHEET_ID, _SHEET_URL} from "./secrets";
 import {createPinMap} from "./map";
-import Map from "ol/Map";
 import {MONTHS} from "./globals";
+
+// HTML TEMPLATES
+import HTML_TEST from "../views/stats.html";
+import HTML_STATS_CASES from "../views/stats-case-by-insp.html"
+import HTML_TABLE from "../views/table.html"
+// END HTML TEMPLATES
 
 let TOKEN_CLIENT: TokenClient;
 
@@ -65,32 +71,32 @@ function genTableTr(insp: string, row: CitationEntry): HTMLElement {
   return tr;
 }
 
-function purgeDataTable(): void {
-  const tableEntryPoint = document.getElementById("table-entry-point");
-  tableEntryPoint!.innerHTML = "";
-}
+// function purgeDataTable(): void {
+//   const tableEntryPoint = document.getElementById("table-entry-point");
+//   tableEntryPoint!.innerHTML = "";
+// }
 
-function populateDataTable(citationTable: CitationTable): void {
+function populateDataTable(v: Viewer, p: PinMap): void {
+  mountInDataPane(HTML_TABLE);
+  const t: CitationTable = v.view();
   const tableEntryPoint = document.getElementById("table-entry-point");
-  for (const insp of Object.keys(citationTable)) {
-    for (const row of citationTable[insp]) {
+  for (const insp of Object.keys(t)) {
+    for (const row of t[insp]) {
       tableEntryPoint!.appendChild(genTableTr(insp, row));
     }
   }
+  attachTableHandlers(v, p);
 }
 
-function renderFromView(v: Viewer, p?: PinMap): void {
-  purgeDataTable();
-  populateDataTable(v.view());
-  if (p) {
-    p.unpinAll();
-    p.addAll(v.view());
-  }
+function renderFromView(v: Viewer, p: PinMap): void {
+  populateDataTable(v, p);
+  p.unpinAll();
+  p.addAll(v.view());
 }
 
 // viewport functions
-function unmountDetailedView(): void {
-  const detailedView = document.querySelector(".detailed-view");
+function unmountDetailedView(identifier: string): void {
+  const detailedView = document.querySelector("." + identifier);
   if (!detailedView) return;
   const viewport = document.querySelector(".overlay") as HTMLElement;
   viewport.removeChild(detailedView);
@@ -98,16 +104,36 @@ function unmountDetailedView(): void {
 }
 
 // event handlers
+function onClickStatsBtn(v: Viewer, p: PinMap): void {
+  const viewport  = document.querySelector(".overlay") as HTMLElement;
+  const statBtn   = document.querySelector(".menu-btn") as HTMLElement;
+
+  if (viewport!.style.display === "block") {
+    statBtn!.classList.remove("btn-on");
+    unmountDetailedView("stats-view");
+    renderFromView(v, p);
+  } else {
+    viewport!.innerHTML = HTML_TEST;
+    statBtn!.classList.add("btn-on");
+    viewport!.style.display = "block";
+    Object.entries(onClickStatBtn)
+      .forEach(([id, fn]) => {
+        document.getElementById(id)!.addEventListener("click", () => fn(v.view()));
+      });
+  }
+}
+
 function onClickDataRow(cmnt: string): void {
-  unmountDetailedView();
+  unmountDetailedView("detailed-view");
   const viewport         = document.querySelector(".overlay") as HTMLElement;
   const detailedView     = document.createElement("div");
   const commentHeader    = document.createElement("h1");
   const commentParagraph = document.createElement("p");
   const backArrow        = document.createElement("span");
   backArrow!.classList.add("material-symbols-outlined", "close-btn");
+  backArrow!.style.backgroundColor = "green";
   backArrow!.innerText = "arrow_back";
-  backArrow!.addEventListener("click", unmountDetailedView);
+  backArrow!.addEventListener("click", () => unmountDetailedView("detailed-view"));
   commentHeader!.innerText = "Comments:";
   commentParagraph!.innerText = cmnt.length ? cmnt : "No comments to display";
   detailedView!.classList.add("detailed-view");
@@ -132,7 +158,6 @@ function onClickLoginBtn(v: Viewer, p: PinMap): void {
     const logoutBtn  = document.querySelector(".logout-btn") as HTMLElement;
     const editBtn    = document.querySelector(".edit-btn") as HTMLElement;
     const loadScrn   = document.getElementById("table-load-pane") as HTMLElement;
-    const tableScrn  = document.querySelector("#data-pane table") as HTMLElement;
     loadScrn!.style.display  = "flex";
     loginBtn!.style.display  = "none";
     logoutBtn!.style.display = "block";
@@ -147,13 +172,14 @@ function onClickLoginBtn(v: Viewer, p: PinMap): void {
 
     v.applyFilter();
 
-    populateDataTable(v.view());
+    populateDataTable(v, p);
     p.addAll(v.view());
 
     loadScrn!.style.display = "none";
-    tableScrn!.style.display = "table";
 
-    attachTableHandlers(v, p);
+    // const tableScrn  = document.querySelector("#data-pane table") as HTMLElement;
+    // tableScrn!.style.display = "table";
+    // attachTableHandlers(v, p);
   };
   TOKEN_CLIENT.requestAccessToken({
     "prompt": gapi.client.getToken() ? "consent" : ""
@@ -183,10 +209,13 @@ function onClickLogoutBtn(v: Viewer): void {
 }
 
 function onClickEditButton(): void {
-  const modal = document.getElementById("modal-background");
+  const modal     = document.getElementById("modal-background");
+  const helpBtn   = document.querySelector(".edit-btn");
+  helpBtn!.classList.remove("btn-on");
   modal!.innerHTML = "";
   modal!.style.display = modal!.style.display === "none" ? "flex" : "none";
   if (modal!.style.display === "flex") {
+    helpBtn!.classList.add("btn-on");
     const embeddedSheet = document.createElement("iframe");
     embeddedSheet!.id  = "modal-sheet";
     embeddedSheet!.src = _SHEET_URL;
@@ -199,7 +228,7 @@ function attachToolbarHandlers(v: Viewer, p: PinMap): void {
   initModal(); // Allow closing by clicking BG area.
   const loginBtn  = document.querySelector(".login-btn");
   const logoutBtn = document.querySelector(".logout-btn");
-  const menuBtn   = document.querySelector(".menu-btn");
+  const menuBtn   = document.querySelector(".menu-btn"); // currently stats!
   const helpBtn   = document.querySelector(".edit-btn");
   loginBtn!.addEventListener(
     "click", () => onClickLoginBtn(v, p)
@@ -207,11 +236,14 @@ function attachToolbarHandlers(v: Viewer, p: PinMap): void {
   logoutBtn!.addEventListener(
     "click", () => onClickLogoutBtn(v)
   );
-  menuBtn!.addEventListener("click",  onClickMenuBtn);
+  menuBtn!.addEventListener(
+    "click",  () => onClickStatsBtn(v, p)
+  );
   helpBtn!.addEventListener("click",  onClickEditButton);
 }
 
 function onTableClickInsp(v: Viewer, p: PinMap): void {
+  console.log("onclick: Hit inspector function");
   const selectedNames = v.listViewByField("names");
   const columnEl = document.getElementById("table-insp");
   columnEl!.classList.toggle("col-selected");
@@ -268,6 +300,7 @@ function onTableClickDate(v: Viewer, p: PinMap): void {
 }
 
 function attachTableHandlers(v: Viewer, p: PinMap): void {
+  console.log("ENTERING TABLE ATTACHMENT");
   const selectorInsp = document.getElementById("table-insp");
   const selectorDate = document.getElementById("table-date");
   const selectorAddr = document.getElementById("table-addr");
@@ -282,6 +315,35 @@ function attachTableHandlers(v: Viewer, p: PinMap): void {
   selectorDept!.addEventListener("click", () => console.log("table hello"));
   selectorSign!.addEventListener("click", () => console.log("table hello"));
   selectorCite!.addEventListener("click", () => console.log("table hello"));
+}
+
+interface statHandlers {
+  [identifier: string]: (v: CitationTable) => void;
+}
+
+const onClickStatBtn: statHandlers = {
+  "s-btn1": (v) => {
+    console.log(v);
+    const dataEntry = document.getElementById("data-pane");
+    dataEntry!.innerHTML = HTML_STATS_CASES;
+    const crunch = document.getElementById("stats-crunch-cases-data");
+    const newElements = Object.entries(v).map(([inspector, cs]) => {
+      let el = document.createElement("div");
+      el!.innerText = `${inspector}: ${cs.length}`;
+      return el;
+    });
+    crunch!.append(...newElements);
+  },
+  "s-btn2": (v) => console.log("s-btn2"),
+  "s-btn3": (v) => console.log("s-btn3"),
+  "s-btn4": (v) => console.log("s-btn4"),
+  "s-btn5": (v) => console.log("s-btn5"),
+  "s-btn6": (v) => console.log("s-btn6"),
+};
+
+function mountInDataPane(tmpl: string): void {
+  const entryPoint = document.getElementById("data-pane");
+  entryPoint!.innerHTML = tmpl;
 }
 
 async function main() {

@@ -1,3 +1,8 @@
+declare module '*.html' {
+  const content: string;
+  export default content;
+}
+
 declare interface initFlags {
   gapi: boolean;
    gis: boolean;
