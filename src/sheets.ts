@@ -28,7 +28,22 @@ async function getSheetData(id: string, rng: string): Promise<ValueRange> {
   }
 }
 
+export async function getSheetGeoCache(id: string): Promise<ValueRange> {
+  try {
+    const response = await gapi.client.sheets.spreadsheets.values.get({
+      spreadsheetId: id,
+      range: "dev-cached"+"!A1:B", // TODO: unhardcode
+    });
+    return response.result;
+  } catch (e) {
+    console.error("Error fetching sheet geo cache data:", e);
+    throw e;
+  }
+}
+
 export async function getAllSheetData(id: string, rng: string): Promise<ValueRange[]> {
+  const cacheTest = await getSheetGeoCache(id);
+  console.log(cacheTest);
   const names = await getAllSheetNames(id);
   const allDataPromises = names.map(n => getSheetData(id, `${n}!${rng}`));
   return Promise.all(allDataPromises);

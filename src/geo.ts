@@ -12,8 +12,25 @@ const urlNominatimSearch = (addr: string, bounds: Array<number>): string =>
   `https://nominatim.openstreetmap.org/search?format=json&q=${addr}` +
   `&viewbox=${bounds[0]},${bounds[1]},${bounds[2]},${bounds[3]}&bounded=1`;
 
+interface CacheMethod {
+  getAddr: (addr: string)                         => string | null | void;
+  setAddr: (addr: string, coords: [Coord, Coord]) => void;
+}
+
+const cacheMethod: { local: CacheMethod; remote: CacheMethod } = {
+  local: {
+    getAddr: (addr)         => localStorage.getItem(addr),
+    setAddr: (addr, coords) => localStorage.setItem(addr, JSON.stringify(coords)),
+  },
+  remote: {
+    getAddr: (addr)         => console.log("TODO: implement me."),
+    setAddr: (addr, coords) => console.log("TODO: implement me."),
+  },
+};
+
 function checkGeoCache(addr: string): Promise<[Coord, Coord] | null> {
-  const cachedLotLan = localStorage.getItem(addr);
+  // const cachedLotLan = localStorage.getItem(addr);
+  const cachedLotLan = cacheMethod.local.getAddr(addr);
   return cachedLotLan
     ? JSON.parse(cachedLotLan)
     : null;
@@ -61,11 +78,13 @@ async function geocodeAddr(addr: string | null): Promise<[Coord, Coord] | null> 
   if (data.length) {
     const [{lon, lat}] = data;
     const coords = geoBind(lat, lon);
-    localStorage.setItem(addr, JSON.stringify(coords));
+    // localStorage.setItem(addr, JSON.stringify(coords));
+    cacheMethod.local.setAddr(addr, coords);
     return coords;
   }
   // console.log(`Unreachable addr: "${addr}", mapping to Null Island.`);
-  localStorage.setItem(addr, JSON.stringify([0, 0])); // map to Null Island
+  // localStorage.setItem(addr, JSON.stringify([0, 0])); // map to Null Island
+  cacheMethod.local.setAddr(addr, [0, 0] as unknown as [Coord, Coord]);
   return null;
 }
 
