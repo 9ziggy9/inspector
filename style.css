@@ -82,7 +82,7 @@ body {
     z-index: 51;
 }
 
-#modal-sheet {
+#modal-sheet { /* Redundancy for adjustment... */
     min-width: calc(100vw - 2rem);
     max-width: calc(100vw - 2rem);
     min-height: calc(100vh - 5rem);

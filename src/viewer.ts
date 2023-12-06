@@ -39,7 +39,7 @@ export function createViewer(): Viewer {
     init: async (id: string, rng: string): Promise<void> => {
       __raw    = await getAllSheetData(id, rng);
       __master = await normalizeSheetData(__raw);
-      __master = await geolocateData(__master);
+      __master = await geolocateData(id, __master);
       __view   = __master;
     },
     log: function(v?: string): void {

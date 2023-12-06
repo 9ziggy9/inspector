@@ -41,11 +41,34 @@ export async function getSheetGeoCache(id: string): Promise<ValueRange> {
   }
 }
 
+export async function appendSheetGeoCache(
+  id: string, addr: string, v: string
+): Promise<void> {
+  try {
+    const params = {
+      spreadsheetId: id,
+      range: "dev-cached"+"!A1:B",
+      valueInputOption: "USER_ENTERED",
+    };
+    const data = {
+      values: [[addr, v]],
+    };
+    const req = gapi.client.sheets.spreadsheets.values.append(
+      params,
+      data
+    );
+    const res = await req;
+  } catch (e) {
+    console.error("Error appending sheet data: ", e);
+    throw e;
+  }
+}
+
 export async function getAllSheetData(id: string, rng: string): Promise<ValueRange[]> {
-  const cacheTest = await getSheetGeoCache(id);
-  console.log(cacheTest);
   const names = await getAllSheetNames(id);
-  const allDataPromises = names.map(n => getSheetData(id, `${n}!${rng}`));
+  const allDataPromises = names
+    .filter(n => n !== "dev-cached")
+    .map(n => getSheetData(id, `${n}!${rng}`));
   return Promise.all(allDataPromises);
 }
 
