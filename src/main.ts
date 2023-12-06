@@ -265,7 +265,7 @@ function onTableClickInsp(v: Viewer, p: PinMap): void {
       v.applyFilter();
 
       renderFromView(v, p);
-    });
+    }) ;
     dropdown!.appendChild(nameEl);
   });
   dropdown!.style.display = dropdown!.style.display === "none" ? "block" : "none";
