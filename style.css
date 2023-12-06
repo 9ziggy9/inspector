@@ -49,13 +49,18 @@
 body,html {
     font-family:  "EB Garamond", serif;
     width:100%;
-    height:93vh;
+    height:100%;
     position:fixed;
     margin: 0;
     padding: 0;
     background-color: var(--my-dark-gray);
     color: var(--my-white);
     caret-color: transparent;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
 }
 
 #modal-background {
@@ -253,35 +258,23 @@ header {
     font-size: 40px;
     cursor: pointer;
 }
+
+#main-content {
+    background-color: var(--my-green);
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
 #data-pane {
     margin: 0;
     padding: 0;
     width: 100%;
     background-color: var(--my-blue);
-    display: block;
-    height: 58vh;
-}
-footer {
-    position: fixed;
-    bottom: 0;
-    z-index: 100;
-    font-family:  "EB Garamond", serif;
-    width: 100%;
-    min-height: 2rem;
-    height: 3vh;
-    background-color: var(--my-black);
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    margin: 0 !important;
-    padding: 0 !important;
-}
-footer a {
-    margin-right: 0.25rem;
-    color: var(--my-white);
-    font-size:1rem;
-    text-decoration: none;
-    display: block;
+    flex-grow: 1;
+    /* display: block; */
+    /* height: 58vh; */
+    /* height:100%; */
 }
 
 .scrollable-table {
@@ -297,6 +290,7 @@ thead {
     width: 100%;
 }
 th {
+    min-height: 1.3rem;
     position: sticky;
     top: 0;
     z-index: 10;
@@ -311,8 +305,9 @@ tr {
 
 .scrollable-body {
     width: 100%;
-    height: 54.5vh;
-    overflow: auto;
+    /* height: 54.5vh; */
+    max-height: calc(100vh - 35vh - 6rem);
+    overflow-y: auto;
 }
 .scrollable-body table {
     /* display: block; */
@@ -473,6 +468,29 @@ tbody tr td {
 }
 
 .selected-insp {background-color: var(--my-green);}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    z-index: 100;
+    font-family:  "EB Garamond", serif;
+    width: 100%;
+    min-height: 2rem;
+    height: 3vh;
+    background-color: var(--my-black);
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+footer a {
+    margin-right: 0.25rem;
+    color: var(--my-white);
+    font-size:1rem;
+    text-decoration: none;
+    display: block;
+}
 
 #modal-sheet {
     height: 100%;

@@ -42,35 +42,38 @@
   </header>
 
   <body>
-    <div id="modal-background" style="display: none;">
-      <div id="modal">
-      </div>
-    </div>
 
+    <div id="modal-background" style="display: none;">
+      <div id="modal"></div>
+    </div>
+    
     <div class="dropdown-menu" id="dropdown" style="display: none;">
         <a href="#">Item 1</a>
         <a href="#">Item 2</a>
         <a href="#">Item 3</a>
     </div>
 
-    <div id="master-view">
-      <div id="map"></div>
-      <div class="overlay"></div>
-    </div>
+    <div id="main-content">
+      <div id="master-view">
+        <div id="map"></div>
+        <div class="overlay"></div>
+      </div>
 
-    <div id="data-pane">
-      <div id="table-load-pane"> <!-- TODO: TEMPLATE -->
-        <div id="loading-line">
-          <span id="loading-text">Loading...</span>
-          <div class="table-load-icon"></div>
+      <div id="data-pane">
+        <div id="table-load-pane"> <!-- TODO: TEMPLATE -->
+          <div id="loading-line">
+            <span id="loading-text">Loading...</span>
+            <div class="table-load-icon"></div>
+          </div>
+          <p id="live-log">(caching geo data... please be patient)</p>
         </div>
-        <p id="live-log">(caching geo data... please be patient)</p>
       </div>
     </div>
 
   </body>
 
   <footer><a href="https://github.com/9ziggy9/inspector">source code</a></footer>
+
   <script async defer src="https://apis.google.com/js/api.js"></script>
   <script async defer src="https://accounts.google.com/gsi/client"></script>
 </html>
