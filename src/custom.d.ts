@@ -42,7 +42,7 @@ declare type ValueRange = gapi.client.sheets.ValueRange;
 declare type CitationEntry = {
   id: string, date: string, addr: string,
   time: string, dept: string, sign: string,
-  cite: string, cmnt: string,
+  cite: string, cmnt: string, stat: string,
   latlon?: [Coord, Coord] | null,
 };
 

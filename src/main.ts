@@ -59,13 +59,13 @@ function genTableTd(data: string): HTMLElement {
 
 function genTableTr(insp: string, row: CitationEntry): HTMLElement {
   const tr = document.createElement("tr");
-  const {id, date, addr, time, dept, sign, cite, cmnt} = row;
+  const {id, date, addr, time, dept, sign, cite, cmnt, stat} = row;
   tr.id = id;
   tr.append(
     genTableTd(insp), genTableTd(date),
     genTableTd(addr), genTableTd(time),
     genTableTd(dept), genTableTd(sign),
-    genTableTd(cite),
+    genTableTd(cite), genTableTd(stat),
   );
   tr.addEventListener("click", () => onClickDataRow(cmnt)); // pass cmnt here
   return tr;
@@ -118,7 +118,7 @@ function onClickStatsBtn(v: Viewer, p: PinMap): void {
     viewport!.style.display = "block";
     Object.entries(onClickStatBtn)
       .forEach(([id, fn]) => {
-        document.getElementById(id)!.addEventListener("click", () => fn(v.view()));
+        document.getElementById(id)!.addEventListener("click", () => fn(v, p));
       });
   }
 }
@@ -163,10 +163,11 @@ function onClickLoginBtn(v: Viewer, p: PinMap): void {
     logoutBtn!.style.display = "block";
     editBtn!.style.display   = "block";
 
-    await v.init(_SHEET_ID, "A4:M"); // unhardcode range
+    await v.init(_SHEET_ID, "A4:Z"); // unhardcode range
+    v.log("raw");
 
     v.setFilter({
-      names: ["drogers", "arogers"],
+      names: ["arogers",],
       months: ["September", "October", "November"],
     } as Filter);
 
@@ -318,27 +319,28 @@ function attachTableHandlers(v: Viewer, p: PinMap): void {
 }
 
 interface statHandlers {
-  [identifier: string]: (v: CitationTable) => void;
+  [identifier: string]: (v: Viewer, p: PinMap) => void;
 }
 
 const onClickStatBtn: statHandlers = {
-  "s-btn1": (v) => {
-    console.log(v);
-    const dataEntry = document.getElementById("data-pane");
-    dataEntry!.innerHTML = HTML_STATS_CASES;
+  "s-btn1": (v, p) => {
+    // const dataEntry = document.getElementById("data-pane");
+    // dataEntry!.innerHTML = HTML_STATS_CASES;
+    mountInDataPane(HTML_STATS_CASES);
     const crunch = document.getElementById("stats-crunch-cases-data");
-    const newElements = Object.entries(v).map(([inspector, cs]) => {
+    const newElements = Object.entries(v.view()).map(([inspector, cs]) => {
       let el = document.createElement("div");
       el!.innerText = `${inspector}: ${cs.length}`;
       return el;
     });
     crunch!.append(...newElements);
+    attachTableHandlers(v, p);
   },
-  "s-btn2": (v) => console.log("s-btn2"),
-  "s-btn3": (v) => console.log("s-btn3"),
-  "s-btn4": (v) => console.log("s-btn4"),
-  "s-btn5": (v) => console.log("s-btn5"),
-  "s-btn6": (v) => console.log("s-btn6"),
+  "s-btn2": (v,p) => console.log("s-btn2"),
+  "s-btn3": (v,p) => console.log("s-btn3"),
+  "s-btn4": (v,p) => console.log("s-btn4"),
+  "s-btn5": (v,p) => console.log("s-btn5"),
+  "s-btn6": (v,p) => console.log("s-btn6"),
 };
 
 function mountInDataPane(tmpl: string): void {

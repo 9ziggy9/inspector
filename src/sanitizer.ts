@@ -15,4 +15,9 @@ export const Sanitizer = {
       ? "0" // coerce whitespace to zero str
       : v
     : "0", // coerce undefined to zero str
+  stat: (v: string): string => v
+    ? REGEX_WHITESPACE.test(v)
+      ? "open"
+      : "closed"
+    : "open",
 };
