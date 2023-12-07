@@ -89,7 +89,7 @@ export async function normalizeSheetData(sheetData: ValueRange[]): Promise<Citat
         "sign": Sanitizer.int(vs[9]),   // signs
         "cite": Sanitizer.int(vs[11]),  // citation num
         "cmnt": vs[12],                 // comment
-        "stat": Sanitizer.stat(vs[13]), // status
+        "stat": Sanitizer.stat(vs[25]), // status
       }))
       .filter(({addr}) => SanityCheck.addr(addr)),
   }), {});

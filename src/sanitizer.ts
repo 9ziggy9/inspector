@@ -17,7 +17,7 @@ export const Sanitizer = {
     : "0", // coerce undefined to zero str
   stat: (v: string): string => v
     ? REGEX_WHITESPACE.test(v)
-      ? "open"
-      : "closed"
-    : "open",
+      ? "none"
+      : v
+    : "none",
 };

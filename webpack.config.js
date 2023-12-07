@@ -32,7 +32,6 @@ module.exports = {
         new CopyWebpackPlugin({
             patterns: [
                 { from: "style.css", to: "style.css"},
-                { from: "./views/stats.html", to: "stats.html"},
             ]
         })
     ]

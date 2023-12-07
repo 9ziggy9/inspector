@@ -4,12 +4,7 @@ import {_API_KEY, _DISC_DOC, _SCOPES,
         _CLIENT_ID, _SHEET_ID, _SHEET_URL} from "./secrets";
 import {createPinMap} from "./map";
 import {MONTHS} from "./globals";
-
-// HTML TEMPLATES
-import HTML_TEST from "../views/stats.html";
-import HTML_STATS_CASES from "../views/stats-case-by-insp.html"
-import HTML_TABLE from "../views/table.html"
-// END HTML TEMPLATES
+import {createUI} from "./ui";
 
 let TOKEN_CLIENT: TokenClient;
 
@@ -103,6 +98,14 @@ function unmountDetailedView(identifier: string): void {
   viewport!.style.display = "none";
 }
 
+
+function toggleStatViewDims(): void {
+  const masterView = document.getElementById("master-view") as HTMLElement;
+  masterView!.classList.toggle("toggle-reduce-height");
+  console.log("Toggling view height.");
+}
+
+
 // event handlers
 function onClickStatsBtn(v: Viewer, p: PinMap): void {
   const viewport  = document.querySelector(".overlay") as HTMLElement;
@@ -164,11 +167,10 @@ function onClickLoginBtn(v: Viewer, p: PinMap): void {
     editBtn!.style.display   = "block";
 
     await v.init(_SHEET_ID, "A4:Z"); // unhardcode range
-    v.log("raw");
 
     v.setFilter({
       names: ["arogers",],
-      months: ["September", "October", "November"],
+      months: ["November",],
     } as Filter);
 
     v.applyFilter();
@@ -301,7 +303,6 @@ function onTableClickDate(v: Viewer, p: PinMap): void {
 }
 
 function attachTableHandlers(v: Viewer, p: PinMap): void {
-  console.log("ENTERING TABLE ATTACHMENT");
   const selectorInsp = document.getElementById("table-insp");
   const selectorDate = document.getElementById("table-date");
   const selectorAddr = document.getElementById("table-addr");
@@ -365,6 +366,8 @@ async function main() {
 
   // Handlers
   attachToolbarHandlers(v, p);
+
+  createUI();
 }
 
 window.onload = main;

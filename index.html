@@ -57,10 +57,52 @@
     
       <div id="master-view">
         <div id="map"></div>
-        <div class="overlay"></div>
+        <div class="overlay">
+          <div class="stats-view">
+            <h2>Generate statistics from filter</h2>
+            <div class="stats-button-array">
+              <button id="s-btn1">cases by inspector</button>
+              <button id="s-btn2">coming soon...</button>
+              <button id="s-btn3">coming soon...</button>
+              <button id="s-btn4">coming soon...</button>
+              <button id="s-btn5">coming soon...</button>
+              <button id="s-btn6">coming soon...</button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div id="data-pane">
+        <div class="scrollable-table">
+          <table>
+            <thead>
+              <tr>
+                <th id="table-insp" class="col-hover">Inspector
+                  <div class="table-drop-menu" id="table-drop-insp" style="display: none;"></div>
+                </th>
+                <th id="table-date" class="col-hover">Date
+                  <div class="table-drop-menu" id="table-drop-date" style="display: none;">
+                      <p>January</p> <p>February</p> <p>March</p> <p>April</p>
+                      <p>May</p> <p>June</p> <p>July</p> <p>August</p>
+                      <p>September</p> <p>October</p> <p>November</p> <p>December</p>
+                    </div>
+                </th>
+                <th id="table-addr" class="col-hover">Address</th>
+                <th id="table-time" class="col-hover">Time</th>
+                <th id="table-dept" class="col-hover">Department</th>
+                <th id="table-sign" class="col-hover">Signs</th>
+                <th id="table-cite" class="col-hover">Citations</th>
+                <th id="table-stat" class="col-hover">Status</th>
+              </tr>
+            </thead>
+          </table>
+        </div>
+
+        <div class="scrollable-body"> <!-- DATA ENTRY POINT -->
+          <table><tbody id="table-entry-point"></tbody></table>
+          <div id="statistics-entry-point"></div>
+        </div>
+
         <div id="table-load-pane"> <!-- TODO: TEMPLATE -->
           <div id="loading-line">
             <span id="loading-text">Loading...</span>
